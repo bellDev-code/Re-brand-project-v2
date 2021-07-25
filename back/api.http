@@ -28,3 +28,12 @@ http://localhost:4190/api/users/1
 
 http://localhost:4190/api/users/kozel/products/gucci
 
+###
+
+POST http://localhost:4190/api/users/login
+Content-Type: application/json
+
+{
+  "username": "youngdo",
+  "password": "qwer1234"
+}
