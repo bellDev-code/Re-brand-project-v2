@@ -36,7 +36,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// GET USER
+// GET USER 질문
 router.get("/:id", async (req, res, next) => {
   try {
     const client = await db.connect();
