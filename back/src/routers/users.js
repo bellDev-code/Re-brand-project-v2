@@ -36,7 +36,19 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-// GET USER 질문
+// GET My Profile
+
+router.get("/", async (req, res, next) => {
+  try {
+    console.log("my userId", req.session.userId);
+    return res.send(req.session.userId);
+  } catch (error) {
+    console.log(error);
+    return res.status(403).send(error.message);
+  }
+});
+
+// GET USER
 router.get("/:id", async (req, res, next) => {
   try {
     const client = await db.connect();
@@ -66,22 +78,27 @@ router.get("/:id", async (req, res, next) => {
 // LOGIN USER
 router.post("/login", async (req, res, next) => {
   try {
+    console.log(req.session);
     const { username, password } = req.body;
+    console.log(req.body);
 
     const client = await db.connect();
 
     const result = await client.query(
       `
-        SELECT username, password FROM public.User WHERE username = $1
+        SELECT id, username, password FROM public.User WHERE username = $1
       `,
       [username]
     );
 
+    // rows 쿼리를 보낸 결과값 []
+    console.log(result.rows);
     if (result.rows.length < 1) {
-      console.log("존재하지 않는 계정입니다.");
+      throw Error("존재하지 않는 계정입니다.");
     }
     client.release();
 
+    // username => unique
     const user = result.rows[0];
 
     const compared = await bcrypt.compare(password, user.password);
@@ -91,7 +108,14 @@ router.post("/login", async (req, res, next) => {
       throw Error("존재하지 않는 계정입니다.");
     }
 
-    return res.send("ok");
+    req.session.userId = user.id;
+    // req.session.save();
+
+    return res.json({
+      success: true,
+      error: null,
+      data: null,
+    });
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);

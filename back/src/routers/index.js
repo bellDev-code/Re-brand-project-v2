@@ -5,5 +5,4 @@ const users = require("./users");
 router.use("/products", products);
 router.use("/users", users);
 
-// module.exports = products;
 module.exports = router;
