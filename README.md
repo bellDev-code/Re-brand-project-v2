@@ -14,3 +14,4 @@ express 활용하여 서버, postgresql로 DB 관리하고 있습니다.
   
 # 2021.07.31
   1. cookie, session 개념 정리
+  2. front setting
