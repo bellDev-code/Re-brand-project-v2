@@ -8,12 +8,13 @@ const helmet = require("helmet");
 const LocalStore = require("session-file-store")(session);
 
 const app = express();
-//response header의 보안을 지켜준다.
 
 // Request body
 app.use(express.json());
 
 app.use(cookieParser(process.env.COOKIE_SECRET));
+
+// Cross-Origin Resource Sharing
 app.use(
   cors({
     credentials: true,
@@ -21,6 +22,7 @@ app.use(
   })
 );
 
+//response header의 보안을 지켜준다.
 app.use(helmet());
 
 // passport 사용 시 기본으로 적용해야함
