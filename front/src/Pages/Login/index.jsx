@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const Container = styled.div`
   display: flex;
@@ -43,7 +43,7 @@ const Login = () => {
         },
       );
       if (data.success) {
-        history.push('/home');
+        history.push('/');
         return;
       }
       throw new Error(data.error?.message);

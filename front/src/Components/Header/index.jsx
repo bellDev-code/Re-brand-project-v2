@@ -1,10 +1,22 @@
 import React from 'react';
-import styled from 'styled-components';
-
-const Container = styled.div``;
+import { Container, MenuContainer, MenuButton, LogoContainer } from './styles.jsx';
 
 const Header = () => {
-  return <Container>Nav</Container>;
+  return (
+    <Container>
+      <LogoContainer>
+        <p style={{ fontSize: 25, fontWeight: 700 }}>Rebrand</p>
+      </LogoContainer>
+      <MenuContainer>
+        <MenuButton>홈</MenuButton>
+        <MenuButton>상품검색</MenuButton>
+        <MenuButton>마이메뉴</MenuButton>
+        <MenuButton>고객센터</MenuButton>
+        <MenuButton>ABOUT US</MenuButton>
+      </MenuContainer>
+      <div style={{ width: '20%' }}></div>
+    </Container>
+  );
 };
 
 export default Header;

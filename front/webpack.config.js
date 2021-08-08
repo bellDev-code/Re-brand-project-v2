@@ -11,12 +11,11 @@ const config = {
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
-      '@hooks': path.resolve(__dirname, 'hooks'),
-      '@components': path.resolve(__dirname, 'components'),
-      '@layouts': path.resolve(__dirname, 'layouts'),
-      '@pages': path.resolve(__dirname, 'pages'),
-      '@utils': path.resolve(__dirname, 'utils'),
-      '@typings': path.resolve(__dirname, 'typings'),
+      '@Hooks': path.resolve(__dirname, 'src/Hooks'),
+      '@Components': path.resolve(__dirname, 'src/Components'),
+      '@Layouts': path.resolve(__dirname, 'src/Layouts'),
+      '@Pages': path.resolve(__dirname, 'src/Pages'),
+      '@Utils': path.resolve(__dirname, 'src/Utils'),
     },
   },
   entry: {

@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import axios from 'axios';
-import Header from '../../Components/Header/index';
+import Header from '@Components/Header/index';
+import Home from '@Pages/Home';
+import Footer from '@Components/Footer';
 
-const Home = () => {
+const Main = () => {
   const getMyProfile = async () => {
     try {
       const { data } = await axios.get('http://localhost:4190/api/users', {
@@ -20,10 +22,11 @@ const Home = () => {
 
   return (
     <div>
-      <Header></Header>
-      Home
+      <Header />
+      <Home />
+      <Footer />
     </div>
   );
 };
 
-export default Home;
+export default Main;
