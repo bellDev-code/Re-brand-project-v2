@@ -7,6 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/app.js"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "sessions"
+    ]
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -24,6 +29,7 @@
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
     "nodemon": "^2.0.12"
   }
 }

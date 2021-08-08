@@ -3,6 +3,7 @@ const db = require("../db");
 const dayjs = require("dayjs");
 const { emailRegex } = require("../utils/regex.js");
 const bcrypt = require("bcrypt");
+const passport = require("passport");
 
 // JOIN USER
 router.post("/", async (req, res, next) => {
@@ -40,8 +41,22 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    console.log("my userId", req.session.userId);
-    return res.send(req.session.userId);
+    // console.log(req.user);
+    // console.log(req.session);
+
+    // const client = await db.connect();
+    // const result = await client.query(
+    //   `
+    //     SELECT id, email, name, createdAt FROM public.user where id = $1
+    //   `,
+    //   [req.session.userId]
+    // );
+
+    return res.json({
+      success: true,
+      error: null,
+      data: req.user,
+    });
   } catch (error) {
     console.log(error);
     return res.status(403).send(error.message);
@@ -78,44 +93,51 @@ router.get("/:id", async (req, res, next) => {
 // LOGIN USER
 router.post("/login", async (req, res, next) => {
   try {
-    console.log(req.session);
-    const { username, password } = req.body;
-    console.log(req.body);
+    passport.authenticate("local", {}, (error, user, info) => {
+      console.log("authenticate");
+      if (error) {
+        console.error(error);
+        return next(error);
+      }
+      if (info) {
+        return res.status(401).send(info.message);
+      }
+      req.login(user, async (loginErr) => {
+        if (loginErr) {
+          console.log(loginErr);
+          return next();
+        }
 
-    const client = await db.connect();
-
-    const result = await client.query(
-      `
-        SELECT id, username, password FROM public.User WHERE username = $1
+        const client = await db.connect();
+        const { rows } = await client.query(
+          `
+        SELECT id, email, name, createdAt FROM public.user WHERE id = $1 
       `,
-      [username]
-    );
+          [user.id]
+        );
 
-    // rows 쿼리를 보낸 결과값 []
-    console.log(result.rows);
-    if (result.rows.length < 1) {
-      throw Error("존재하지 않는 계정입니다.");
-    }
-    client.release();
+        return res.status(200).json({
+          success: true,
+          error: null,
+          data: rows[0],
+        });
+      });
+    })(req, res, next);
 
-    // username => unique
-    const user = result.rows[0];
+    // req.session.userId = user.id;
+    // req.session.save(() => {
+    //   return res.json({
+    //     success: true,
+    //     error: null,
+    //     data: null,
+    //   });
+    // });
 
-    const compared = await bcrypt.compare(password, user.password);
-    // console.log(compared);
-
-    if (!compared) {
-      throw Error("존재하지 않는 계정입니다.");
-    }
-
-    req.session.userId = user.id;
-    // req.session.save();
-
-    return res.json({
-      success: true,
-      error: null,
-      data: null,
-    });
+    // return res.json({
+    //   success: true,
+    //   error: null,
+    //   data: null,
+    // });
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);

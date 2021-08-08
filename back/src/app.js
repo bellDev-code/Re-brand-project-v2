@@ -6,6 +6,9 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const LocalStore = require("session-file-store")(session);
+// const authMiddleware = require("./middlewares/auth");
+const { Strategy: LocalStrategy } = require("passport-local");
+const bcrypt = require("bcrypt");
 
 const app = express();
 
@@ -41,14 +44,75 @@ app.use(
     store: new LocalStore(),
   })
 );
-// app.use(passport.initialize());
-// app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  console.log("serializeUser", user);
+
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    done(null, false);
+  } catch (error) {
+    console.error(error);
+    done(error);
+  }
+});
+
+passport.use(
+  new LocalStrategy(
+    {
+      usernameFiled: "username",
+      passwordFiled: "password",
+    },
+    async (username, password, done) => {
+      try {
+        const connect = await db.connect();
+
+        const { rows } = await connect.query(
+          `
+          SELECT * FROM public.user WHERE username = $1
+        `,
+          [username]
+        );
+
+        if (!rows.length) {
+          return done(null, false, {
+            message: "존재하지 않는 아이디입니다.",
+          });
+        }
+
+        const user = rows[0];
+
+        const compared = await bcrypt.compare(password, user.password);
+
+        if (!compared) {
+          return done(null, false, {
+            message: "비밀번호가 일치하지 않습니다.",
+          });
+        }
+
+        return done(null, user);
+      } catch (error) {
+        console.error(error);
+        return done(error);
+      }
+    }
+  )
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// app.use(authMiddleware);
 
 // set port
 app.set("PORT", process.env.PORT || 4190);
 
 // index 가져옴
 const api = require("./routers");
+const { Passport } = require("passport");
 
 app.use("/api", api);
 

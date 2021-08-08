@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+`;
+
+const LoginForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
 
 const Login = () => {
   const [username, setUsername] = useState('jongho');
@@ -47,16 +61,16 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={onSubmit}>
+    <Container>
+      <LoginForm onSubmit={onSubmit}>
         <label>아이디</label>
         <input type="text" value={username} onChange={onChangeUsername} />
         <label>비밀번호</label>
         <input type="password" value={password} onChange={onChangePassword} />
         <br />
         <button type="submit">login</button>
-      </form>
-    </div>
+      </LoginForm>
+    </Container>
   );
 };
 
