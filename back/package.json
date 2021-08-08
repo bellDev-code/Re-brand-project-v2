@@ -9,7 +9,7 @@
   },
   "nodemonConfig": {
     "ignore": [
-      "sessions"
+      "./sessions"
     ]
   },
   "author": "",

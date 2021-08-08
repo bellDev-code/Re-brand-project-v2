@@ -4,6 +4,7 @@ const dayjs = require("dayjs");
 const { emailRegex } = require("../utils/regex.js");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const { IsLoggedIn } = require("../middlewares/auth");
 
 // JOIN USER
 router.post("/", async (req, res, next) => {
@@ -38,20 +39,9 @@ router.post("/", async (req, res, next) => {
 });
 
 // GET My Profile
-
-router.get("/", async (req, res, next) => {
+// IsLoggedIn 미들웨어 역할을 한다.
+router.get("/", IsLoggedIn, async (req, res, next) => {
   try {
-    // console.log(req.user);
-    // console.log(req.session);
-
-    // const client = await db.connect();
-    // const result = await client.query(
-    //   `
-    //     SELECT id, email, name, createdAt FROM public.user where id = $1
-    //   `,
-    //   [req.session.userId]
-    // );
-
     return res.json({
       success: true,
       error: null,
