@@ -39,6 +39,7 @@ app.use(
   })
 );
 
+// passport 사용
 require("./passport")(app);
 
 // Set port

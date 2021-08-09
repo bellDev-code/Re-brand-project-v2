@@ -73,6 +73,7 @@ module.exports = (app) => {
     )
   );
 
+  // passport 기본
   app.use(passport.initialize());
   app.use(passport.session());
 };
