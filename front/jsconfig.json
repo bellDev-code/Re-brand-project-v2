@@ -6,7 +6,8 @@
       "@Hooks/*": ["src/Hooks/*"],
       "@Layouts/*": ["src/Layouts/*"],
       "@Pages/*": ["src/Pages/*"],
-      "@Utils/*": ["src/Utils/*"]
+      "@Utils/*": ["src/Utils/*"],
+      "@Assets/*": ["src/Assets/*"]
     }
   }
 }

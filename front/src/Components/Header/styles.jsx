@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 export const Container = styled.div`
   display: flex;
   width: 100%;
+  background-color: #fef5ef;
 `;
 
 export const MenuContainer = styled.ul`
@@ -23,4 +24,8 @@ export const LogoContainer = styled.div`
   display: flex;
   width: 20%;
   justify-content: center;
+  max-width: 500px;
+  & > img {
+    width: 100%;
+  }
 `;

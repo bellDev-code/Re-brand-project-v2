@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <Container>
       <LogoContainer>
-        <p style={{ fontSize: 25, fontWeight: 700 }}>Rebrand</p>
+        <img src="@Assets/Logo/Re-logo.png" />
       </LogoContainer>
       <MenuContainer>
         <MenuButton>홈</MenuButton>
