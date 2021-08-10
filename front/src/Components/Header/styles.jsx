@@ -24,7 +24,9 @@ export const LogoContainer = styled.div`
   display: flex;
   width: 20%;
   justify-content: center;
-  max-width: 500px;
+  align-items: center;
+  font-size: 25px;
+  font-weight: 600;
   & > img {
     width: 100%;
   }

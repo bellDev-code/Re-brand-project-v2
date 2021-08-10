@@ -1,11 +1,13 @@
 import React from 'react';
 import { Container, MenuContainer, MenuButton, LogoContainer } from './styles.jsx';
+// import LogoImage from '@Assets/Logo/Re-logo.png';
 
 const Header = () => {
   return (
     <Container>
       <LogoContainer>
-        <img src="@Assets/Logo/Re-logo.png" />
+        {/* <img src={LogoImage} /> */}
+        Re-Brand
       </LogoContainer>
       <MenuContainer>
         <MenuButton>홈</MenuButton>
