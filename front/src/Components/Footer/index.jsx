@@ -1,15 +1,18 @@
 import React from 'react';
-import styled from '@emotion/styled';
-
-const Container = styled.div``;
-
-const FooterWidget = styled.div``;
+import { FooterContainer, FooterBox, FooterWidget } from './styles';
+import CopyRight from './copyRight';
 
 const Footer = () => {
   return (
-    <Container>
-      <FooterWidget></FooterWidget>
-    </Container>
+    <FooterContainer>
+      <FooterBox>
+        <FooterWidget>one</FooterWidget>
+        <FooterWidget>two</FooterWidget>
+        <FooterWidget>three</FooterWidget>
+        <FooterWidget>four</FooterWidget>
+      </FooterBox>
+      <CopyRight />
+    </FooterContainer>
   );
 };
 
