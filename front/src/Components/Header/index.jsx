@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, MenuContainer, MenuButton, LogoContainer } from './styles.jsx';
+import HeaderMenu from '@Components/HeaderMenu/index.jsx';
 // import LogoImage from '@Assets/Logo/Re-logo.png';
 
 const Header = () => {
@@ -16,7 +17,7 @@ const Header = () => {
         <MenuButton>고객센터</MenuButton>
         <MenuButton>ABOUT US</MenuButton>
       </MenuContainer>
-      <div style={{ width: '20%' }}></div>
+      <HeaderMenu></HeaderMenu>
     </Container>
   );
 };
