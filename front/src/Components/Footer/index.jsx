@@ -1,31 +1,24 @@
 import React from 'react';
 import { FooterContainer, FooterBox, FooterWidget } from './styles';
 import CopyRight from '../CopyRight';
-import { ContentsBox, InfoBox, SnsBox } from './styles';
-import { IoLogoInstagram } from 'react-icons/io';
-import { FaFacebookF } from 'react-icons/fa';
+import ContentsBox from './ContentsBox/';
+import InfoBox from './Infobox/';
+import NewsLetter from './NewsLetter';
 
 const Footer = () => {
   return (
     <FooterContainer>
       <FooterBox>
         <FooterWidget>
-          <ContentsBox>
-            <div>이미지</div>
-            <p>
-              No. 1 luxury rental platform in Korea. We will accompany you until the day when everyone can be happy.
-            </p>
-            <SnsBox>
-              <FaFacebookF />
-              <IoLogoInstagram />
-            </SnsBox>
-          </ContentsBox>
+          <ContentsBox />
         </FooterWidget>
         <FooterWidget>
-          <InfoBox></InfoBox>
+          <InfoBox />
         </FooterWidget>
-        <FooterWidget>three</FooterWidget>
-        <FooterWidget>four</FooterWidget>
+        <FooterWidget></FooterWidget>
+        <FooterWidget>
+          <NewsLetter />
+        </FooterWidget>
       </FooterBox>
       <CopyRight />
     </FooterContainer>
