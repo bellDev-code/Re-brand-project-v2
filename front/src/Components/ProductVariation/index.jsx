@@ -1,7 +1,8 @@
 import React from 'react';
+import { Container } from './styles';
 
 const ProductVariation = () => {
-  return <section>Product Variation</section>;
+  return <Container>Product Variation</Container>;
 };
 
 export default ProductVariation;
