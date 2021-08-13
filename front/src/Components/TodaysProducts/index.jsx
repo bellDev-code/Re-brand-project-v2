@@ -1,8 +1,17 @@
 import React from 'react';
-import { Container } from './styles';
+import { Container, BestBox, TextWrapper, ProductBox } from './styles';
 
-const TodayProducts = () => {
-  return <Container>Today Products</Container>;
+const TodaysProducts = () => {
+  return (
+    <Container>
+      <BestBox>
+        <TextWrapper>
+          <h2>TODAY DEALS</h2>
+        </TextWrapper>
+        <ProductBox></ProductBox>
+      </BestBox>
+    </Container>
+  );
 };
 
-export default TodayProducts;
+export default TodaysProducts;

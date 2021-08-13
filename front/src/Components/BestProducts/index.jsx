@@ -1,12 +1,17 @@
 import React from 'react';
-import styled from '@emotion/styled';
-
-const Container = styled.section`
-  padding: 100px 0 100px 0;
-`;
+import { Container, BestBox, TextWrapper, ProductBox } from './styles';
 
 const BestProducts = () => {
-  return <Container>BestProducts</Container>;
+  return (
+    <Container>
+      <BestBox>
+        <TextWrapper>
+          <h2>THE BEST PRODUCT</h2>
+        </TextWrapper>
+        <ProductBox></ProductBox>
+      </BestBox>
+    </Container>
+  );
 };
 
 export default BestProducts;
