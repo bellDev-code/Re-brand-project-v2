@@ -1,8 +1,9 @@
 import BestProducts from '@Components/BestProducts';
 import HomeBanner from '@Components/HomeBanner';
-import InstagramArea from '@Components/InstargramArea';
+import InstagramArea from '@Components/InstagramArea';
 import ProductVariation from '@Components/ProductVariation';
 import TodayProducts from '@Components/TodaysProducts';
+import TrendingNewFashion from '@Components/TrendingNew';
 import React from 'react';
 import { Container } from './styles';
 
@@ -13,6 +14,7 @@ const Home = () => {
       <ProductVariation />
       <BestProducts />
       <TodayProducts />
+      <TrendingNewFashion />
       <InstagramArea />
     </Container>
   );
