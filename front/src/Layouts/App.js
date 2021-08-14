@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Main from './Main';
 import Login from '@Pages/Login';
+import Register from '@Pages/Register';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
         {/* render={()=> <Login />} */}
         <Route exact path="/" component={Main} />
         <Route path="/login" component={Login} />
+        <Route path="/Register" component={Register} />
         <Redirect exact path="/" to={Login}></Redirect>
       </Switch>
     </Router>

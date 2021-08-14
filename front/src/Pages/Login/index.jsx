@@ -1,20 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import styled from '@emotion/styled';
-
-const Container = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh;
-`;
-
-const LoginForm = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
+import { Container, AccountForm, LoginForm, InputWrapper, ButtonWrapper, LoginBtn } from './styles';
 
 const Login = () => {
   const [username, setUsername] = useState('jongho');
@@ -62,14 +49,23 @@ const Login = () => {
 
   return (
     <Container>
-      <LoginForm onSubmit={onSubmit}>
-        <label>아이디</label>
-        <input type="text" value={username} onChange={onChangeUsername} />
-        <label>비밀번호</label>
-        <input type="password" value={password} onChange={onChangePassword} />
-        <br />
-        <button type="submit">login</button>
-      </LoginForm>
+      <AccountForm>
+        <h3>Login</h3>
+        <LoginForm onSubmit={onSubmit}>
+          <InputWrapper>
+            <label>Username</label>
+            <input type="text" value={username} onChange={onChangeUsername} />
+          </InputWrapper>
+          <InputWrapper>
+            <label>Password</label>
+            <input type="password" value={password} onChange={onChangePassword} />
+          </InputWrapper>
+          <ButtonWrapper>
+            <LoginBtn type="submit">login</LoginBtn>
+          </ButtonWrapper>
+          <div style={{ paddingTop: '20px' }}>Create Your Account? </div>
+        </LoginForm>
+      </AccountForm>
     </Container>
   );
 };

@@ -12,7 +12,7 @@ const Header = () => {
       </LogoContainer>
       <MenuContainer>
         <MenuButton>홈</MenuButton>
-        <MenuButton>상품검색</MenuButton>
+        <MenuButton>상품</MenuButton>
         <MenuButton>마이메뉴</MenuButton>
         <MenuButton>고객센터</MenuButton>
         <MenuButton>ABOUT US</MenuButton>
