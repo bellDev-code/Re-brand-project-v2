@@ -22,6 +22,17 @@ router.post("/", async (req, res, next) => {
 
     const client = await db.connect();
 
+    const isExist = await client.query(
+      `
+        SELECT * FROM public.User WHERE username = $1 OR email = $2
+      `,
+      [req.body.username, req.body.email]
+    );
+
+    if (isExist.rows.length) {
+      throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
+    }
+
     await client.query(
       `
         INSERT INTO public.User (username, password, name, email, createdAt)
@@ -31,10 +42,16 @@ router.post("/", async (req, res, next) => {
     );
     client.release();
 
-    return res.send("user join");
+    return res.json({
+      success: true,
+      error: null,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(403).send(error.message);
+    return res.status(403).json({
+      success: false,
+      error: error.message,
+    });
   }
 });
 
@@ -106,6 +123,8 @@ router.post("/login", async (req, res, next) => {
           [user.id]
         );
 
+        client.release();
+
         return res.status(200).json({
           success: true,
           error: null,
@@ -137,6 +156,58 @@ router.post("/login", async (req, res, next) => {
 // Delete USER
 router.delete("/", async (req, res, next) => {
   res.send("Delete User");
+});
+
+// Check Register Data
+router.post("/check", async (req, res, next) => {
+  console.log(req.body);
+  console.log(req.query);
+
+  try {
+    const query = req.query;
+
+    const type = query.type;
+
+    if (type !== "username" && type !== "email") {
+      throw new Error(`${type} is not check type`);
+    }
+
+    const client = await db.connect();
+
+    if (type === "username") {
+      const { rows } = await client.query(
+        `
+          SELECT * FROM public.User WHERE username = $1
+        `,
+        [req.body.payload]
+      );
+
+      if (rows[0]) {
+        throw new Error("이미 사용하고 있는 아이디입니다.");
+      }
+    } else if (type === "email") {
+      const { rows } = await client.query(
+        `
+          SELECT * FROM public.User WHERE email = $1
+        `,
+        [req.body.payload]
+      );
+
+      if (rows[0]) {
+        throw new Error("이미 사용하고 있는 이메일입니다.");
+      }
+    }
+
+    client.release();
+
+    return res.status(200).json({
+      success: true,
+      error: null,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(403).json({ success: false, error: error.message });
+  }
 });
 
 module.exports = router;

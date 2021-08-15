@@ -7,7 +7,7 @@ exports.IsLoggedIn = async (req, res, next) => {
     throw new Error();
   } catch (error) {
     return res.status(401).json({
-      success: true,
+      success: false,
       error: "Not authorization",
       data: null,
     });

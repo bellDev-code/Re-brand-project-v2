@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { Container, AccountForm, LoginForm, InputWrapper, ButtonWrapper, LoginBtn } from './styles';
 
@@ -63,7 +64,9 @@ const Login = () => {
           <ButtonWrapper>
             <LoginBtn type="submit">login</LoginBtn>
           </ButtonWrapper>
-          <div style={{ paddingTop: '20px' }}>Create Your Account? </div>
+          <Link to="/register" style={{ paddingTop: '20px' }}>
+            Create Your Account?
+          </Link>
         </LoginForm>
       </AccountForm>
     </Container>

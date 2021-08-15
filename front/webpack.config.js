@@ -50,6 +50,14 @@ const config = {
         exclude: path.join(__dirname, 'node_modules'),
       },
       {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+      {
         test: /\.css?$/,
         use: ['style-loader', 'css-loader'],
       },
