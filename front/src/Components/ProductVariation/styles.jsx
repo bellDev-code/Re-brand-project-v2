@@ -30,7 +30,7 @@ export const Item_one = styled.div`
 export const OneItem = styled.div`
   position: absolute;
   bottom: 30%;
-  left: 60%;
+  left: 50%;
   & > h4 {
     margin: 0;
     font-size: 22px;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, LeftWidget, RightWidget } from './styles';
+import Payment from '@Assets/Layouts/copyright/payment.png';
 
 const copyRight = () => {
   return (
@@ -7,7 +8,9 @@ const copyRight = () => {
       <LeftWidget>
         © CopyRight 2021 <span>Rebrand</span>
       </LeftWidget>
-      <RightWidget>이미지</RightWidget>
+      <RightWidget>
+        <img src={Payment} />
+      </RightWidget>
     </Container>
   );
 };

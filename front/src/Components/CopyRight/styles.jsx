@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const Container = styled.div`
   display: flex;
-  padding: 15px 0;
+  padding: 15px 40px;
   border-top: 1px solid #ededed;
   background: #000;
   justify-content: space-between;
@@ -21,4 +21,5 @@ export const LeftWidget = styled.div`
 export const RightWidget = styled.div`
   color: #fff;
   width: 50%;
+  text-align: right;
 `;
