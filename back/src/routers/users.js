@@ -210,4 +210,21 @@ router.post("/check", async (req, res, next) => {
   }
 });
 
+router.post("/find", async (req, res, next) => {
+  try {
+    const client = await db.connect();
+
+    const result = await client.query(
+      `
+        SELECT * FROM public.User WHERE email = $1
+      `,
+      [req.body.email]
+    );
+
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 module.exports = router;

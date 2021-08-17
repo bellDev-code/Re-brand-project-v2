@@ -5,6 +5,7 @@ import Login from '@Pages/Login';
 import Register from '@Pages/Register';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import Find from '@Pages/Find';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
           <Route exact path="/" component={Main} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
+          <Route path="/find" component={Find} />
           <Redirect exact path="/" to="/login" />
         </Switch>
       </Router>

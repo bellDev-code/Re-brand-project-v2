@@ -15,11 +15,7 @@ const Login = () => {
     try {
       const username = e.target[0].value;
       const password = e.target[1].value;
-      // axios({
-      //   method: "POST",
-      //   data: {
-      //   }
-      // })
+
       const { data } = await axios.post(
         'http://localhost:4190/api/users/login',
         {
@@ -67,6 +63,7 @@ const Login = () => {
           <Link to="/register" style={{ paddingTop: '20px' }}>
             Create Your Account?
           </Link>
+          <Link to="/find">Find Your Username?</Link>
         </LoginForm>
       </AccountForm>
     </Container>
