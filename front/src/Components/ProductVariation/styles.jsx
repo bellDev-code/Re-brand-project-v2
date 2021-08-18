@@ -30,7 +30,30 @@ export const Item_one = styled.div`
 export const OneItem = styled.div`
   position: absolute;
   bottom: 30%;
-  left: 50%;
+  left: 60%;
+  & > h4 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #f79837;
+  }
+
+  & > h2 {
+    margin: 0;
+    font-size: 36px;
+  }
+
+  & > h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+`;
+
+export const TwoItem = styled.div`
+  position: absolute;
+  bottom: 28%;
+  right: 50%;
   & > h4 {
     margin: 0;
     font-size: 22px;
@@ -53,6 +76,18 @@ export const OneItem = styled.div`
 export const Item_two = styled.div`
   & > img {
     width: 100%;
+  }
+`;
+
+export const MiddleWrapper = styled.div`
+  position: absolute;
+  bottom: 18%;
+  left: 10%;
+
+  & > h2 {
+    color: #f79837;
+    font-size: 36px;
+    margin: 0;
   }
 `;
 
