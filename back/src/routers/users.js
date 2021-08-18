@@ -214,16 +214,21 @@ router.post("/find", async (req, res, next) => {
   try {
     const client = await db.connect();
 
-    const result = await client.query(
+    const { rows } = await client.query(
       `
         SELECT * FROM public.User WHERE email = $1
       `,
       [req.body.email]
     );
 
-    console.log(result);
+    client.release();
+
+    console.log(rows);
+
+    return res.status(200).send("Find");
   } catch (error) {
     console.log(error);
+    return res.send(403).send("No Find");
   }
 });
 

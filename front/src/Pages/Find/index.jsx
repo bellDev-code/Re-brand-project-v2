@@ -14,8 +14,10 @@ const Find = () => {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('http://localhost:4190/api/users/find');
-      console.log(data);
+      const result = await axios.post('http://localhost:4190/api/users/find', {
+        email: email.value,
+      });
+      console.log(result);
     } catch (error) {
       console.log(error);
     }

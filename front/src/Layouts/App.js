@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Main from './Main';
+import MainShop from './MainShop';
 import Login from '@Pages/Login';
 import Register from '@Pages/Register';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +15,7 @@ const App = () => {
         <Switch>
           {/* render={()=> <Login />} */}
           <Route exact path="/" component={Main} />
+          <Route path="/shop" component={MainShop} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Register} />
           <Route path="/find" component={Find} />

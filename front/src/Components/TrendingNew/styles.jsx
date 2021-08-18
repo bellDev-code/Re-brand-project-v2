@@ -4,6 +4,8 @@ import TrendImg from '@Assets/Layouts/Banner/trendingbanner.jpg';
 export const Container = styled.section`
   padding: 115px 0;
   background-image: url(${TrendImg});
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 export const TrendingBox = styled.div`
