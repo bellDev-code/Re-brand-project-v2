@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
+import TrendImg from '@Assets/Layouts/Banner/trendingbanner.jpg';
 
 export const Container = styled.section`
   padding: 115px 0;
+  background-image: url(${TrendImg});
 `;
 
 export const TrendingBox = styled.div`
@@ -25,11 +27,13 @@ export const TextWrapper = styled.div`
     line-height: 40px;
     margin: 0;
     padding: 10px 0;
+    color: #fff;
   }
 
   & > p {
     padding-bottom: 30px;
     margin: 0;
+    color: #fff;
   }
 `;
 
