@@ -211,10 +211,11 @@ router.post("/check", async (req, res, next) => {
 });
 
 router.post("/find", async (req, res, next) => {
+  console.log(req.body);
   try {
     const client = await db.connect();
 
-    const { rows } = await client.query(
+    const result = await client.query(
       `
         SELECT * FROM public.User WHERE email = $1
       `,
@@ -223,9 +224,9 @@ router.post("/find", async (req, res, next) => {
 
     client.release();
 
-    console.log(rows);
+    console.log(result.rows);
 
-    return res.status(200).send("Find");
+    return res.status(200).json(result.rows);
   } catch (error) {
     console.log(error);
     return res.send(403).send("No Find");
