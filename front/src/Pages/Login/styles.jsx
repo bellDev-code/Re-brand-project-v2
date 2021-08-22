@@ -26,19 +26,6 @@ export const LoginForm = styled.form`
   flex-direction: column;
 `;
 
-export const InputWrapper = styled.div`
-  margin-bottom: 30px;
-  & > input {
-    width: 100%;
-    min-height: 45px;
-    background: #fff;
-    border-color: #ddd;
-    border: 1px solid #ddd;
-    border-radius: 0.25rem;
-    padding: 0.375rem 0.75rem;
-  }
-`;
-
 export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;

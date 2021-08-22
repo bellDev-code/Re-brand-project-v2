@@ -5,6 +5,7 @@ import useInput from '@Hooks/useInput';
 
 const Find = () => {
   const email = useInput('sumaoo20@naver.com');
+  const findResult = useInput('');
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -13,13 +14,17 @@ const Find = () => {
       const { data } = await axios.post('http://localhost:4190/api/users/find', {
         email: email.value,
       });
-      console.log(data[0].username);
-
       if (data) {
-        alert(`당신의 username은 ${data[0].username}입니다`);
+        findResult.setValue(`당신의 username은 ${data.username}입니다`);
+        return;
       }
+      throw new Error('알 수 없는 오류');
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        findResult.setValue(error.response.data);
+      } else {
+        findResult.setValue(error.message);
+      }
     }
   };
 
@@ -32,6 +37,7 @@ const Find = () => {
             <label>Email</label>
             <input type="email" value={email.value} onChange={email.onChange} />
           </InputWrapper>
+          {findResult.value && <h3>{findResult.value}</h3>}
           <ButtonWrapper>
             <FindBtn type="submit">Find</FindBtn>
           </ButtonWrapper>

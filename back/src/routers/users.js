@@ -211,25 +211,27 @@ router.post("/check", async (req, res, next) => {
 });
 
 router.post("/find", async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const client = await db.connect();
 
-    const result = await client.query(
+    const { rows } = await client.query(
       `
-        SELECT * FROM public.User WHERE email = $1
+        SELECT username FROM public.User WHERE email = $1
       `,
       [req.body.email]
     );
 
     client.release();
 
-    console.log(result.rows);
+    if (!rows.length) {
+      throw new Error("해당 이메일을 가진 유저가 없습니다.");
+    }
 
-    return res.status(200).json(result.rows);
+    return res.status(200).json(rows[0]);
   } catch (error) {
-    console.log(error);
-    return res.send(403).send("No Find");
+    console.error(error);
+    return res.status(403).send(error.message);
   }
 });
 

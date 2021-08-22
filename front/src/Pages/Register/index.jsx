@@ -23,7 +23,7 @@ const Register = () => {
       return;
     }
 
-    if (idRegex.test(username.value)) {
+    if (!idRegex.test(username.value)) {
       toast('아이디는 영소문자, 숫자를 조합한 5~20자로 가능합니다');
       return;
     }
@@ -110,6 +110,7 @@ const Register = () => {
       email.setError(error.response?.data?.error);
     }
   };
+
   return (
     <Container>
       <AccountForm>

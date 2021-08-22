@@ -1,62 +1,53 @@
-import React, { useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import { Container, AccountForm, LoginForm, InputWrapper, ButtonWrapper, LoginBtn } from './styles';
+import { Container, AccountForm, LoginForm, ButtonWrapper, LoginBtn } from './styles';
+import LabelInput from '@Components/LabelInput';
+import { AuthContext } from '@Hooks/Contexts/AuthContext';
 
 const Login = () => {
-  const [username, setUsername] = useState('jongho');
-  const [password, setPassword] = useState('lee1313');
-
   const history = useHistory();
+  const { refetch } = useContext(AuthContext);
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    try {
+  const onSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+
       const username = e.target[0].value;
       const password = e.target[1].value;
 
-      const { data } = await axios.post(
-        'http://localhost:4190/api/users/login',
-        {
-          username: username,
-          password: password,
-        },
-        {
-          withCredentials: true,
-        },
-      );
-      if (data.success) {
-        history.push('/');
-        return;
+      try {
+        const { data } = await axios.post(
+          'http://localhost:4190/api/users/login',
+          {
+            username: username,
+            password: password,
+          },
+          {
+            withCredentials: true,
+          },
+        );
+        if (data.success) {
+          refetch();
+          history.push('/');
+          return;
+        }
+        throw new Error(data.error?.message);
+      } catch (error) {
+        console.log(error);
       }
-      throw new Error(data.error?.message);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const onChangeUsername = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const onChangePassword = (e) => {
-    setPassword(e.target.value);
-  };
+    },
+    [history],
+  );
 
   return (
     <Container>
       <AccountForm>
         <h3>Login</h3>
         <LoginForm onSubmit={onSubmit}>
-          <InputWrapper>
-            <label>Username</label>
-            <input type="text" value={username} onChange={onChangeUsername} />
-          </InputWrapper>
-          <InputWrapper>
-            <label>Password</label>
-            <input type="password" value={password} onChange={onChangePassword} />
-          </InputWrapper>
+          <LabelInput name="Username" />
+          <LabelInput name="Password" type="password" />
           <ButtonWrapper>
             <LoginBtn type="submit">login</LoginBtn>
           </ButtonWrapper>
