@@ -235,4 +235,34 @@ router.post("/find", async (req, res, next) => {
   }
 });
 
+router.post("/change", async (req, res, next) => {
+  try {
+    const client = await db.connect();
+
+    const { rows } = await client.query(
+      `
+        SELECT password FROM public.User WHERE username = $1
+      `,
+      [req.body.username]
+    );
+
+    client.release();
+
+    console.log(rows[0]);
+
+    // if(rows[0]) {
+    //   await client.query(
+    //     `
+    //       UPDATE public.User SET
+    //     `
+    //   )
+    // }
+
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.log(error);
+    return res.status(403).send(error.message);
+  }
+});
+
 module.exports = router;

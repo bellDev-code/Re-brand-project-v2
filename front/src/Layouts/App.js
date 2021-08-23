@@ -5,7 +5,7 @@ import MainShop from './MainShop';
 import Login from '@Pages/Login';
 import Register from '@Pages/Register';
 import Find from '@Pages/Find/user';
-import FindPassword from '@Pages/Find/password';
+import Change from '@Pages/Find/change';
 
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
@@ -23,7 +23,7 @@ const App = () => {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/find" component={Find} />
-            <Route path="/findPassword" component={FindPassword} />
+            <Route path="/change" component={Change} />
           </AuthContextProvider>
         </Switch>
       </Router>
