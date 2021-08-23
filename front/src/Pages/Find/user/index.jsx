@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn } from './styles';
 import useInput from '@Hooks/useInput';
+import { Link } from 'react-router-dom';
 
 const Find = () => {
   const email = useInput('sumaoo20@naver.com');
@@ -38,6 +39,7 @@ const Find = () => {
             <input type="email" value={email.value} onChange={email.onChange} />
           </InputWrapper>
           {findResult.value && <h3>{findResult.value}</h3>}
+          {findResult.value && <Link to="/findPassword">비밀번호 찾기</Link>}
           <ButtonWrapper>
             <FindBtn type="submit">Find</FindBtn>
           </ButtonWrapper>
