@@ -235,7 +235,7 @@ router.post("/find", async (req, res, next) => {
   }
 });
 
-router.post("/change", async (req, res, next) => {
+router.post("/password", async (req, res, next) => {
   try {
     const client = await db.connect();
 
@@ -248,20 +248,30 @@ router.post("/change", async (req, res, next) => {
 
     client.release();
 
-    console.log(rows[0]);
+    if (!rows.length) {
+      throw new Error("해당 username을 가진 데이터가 없습니다.");
+    }
 
-    // if(rows[0]) {
-    //   await client.query(
-    //     `
-    //       UPDATE public.User SET
-    //     `
-    //   )
-    // }
+    console.log(rows[0]);
 
     return res.status(200).json(rows[0]);
   } catch (error) {
     console.log(error);
     return res.status(403).send(error.message);
+  }
+});
+
+router.post("/change", async (req, res, next) => {
+  try {
+    const client = db.connect();
+
+    const { rows } = await client.query(
+      `
+        UPDATE INTO 
+      `
+    );
+  } catch (error) {
+    console.log(error);
   }
 });
 

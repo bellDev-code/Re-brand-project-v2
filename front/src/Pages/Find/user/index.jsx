@@ -39,7 +39,7 @@ const Find = () => {
             <input type="email" value={email.value} onChange={email.onChange} />
           </InputWrapper>
           {findResult.value && <h3>{findResult.value}</h3>}
-          {findResult.value && <Link to="/findPassword">비밀번호 찾기</Link>}
+          {findResult.value && <Link to="/change">비밀번호 변경하기</Link>}
           <ButtonWrapper>
             <FindBtn type="submit">Find</FindBtn>
           </ButtonWrapper>

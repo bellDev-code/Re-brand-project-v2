@@ -55,3 +55,8 @@ export const FindBtn = styled.button`
   border: 0;
   padding: 16px 35px;
 `;
+
+export const ChangeForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
