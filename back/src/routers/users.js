@@ -261,18 +261,26 @@ router.post("/password", async (req, res, next) => {
   }
 });
 
-router.post("/change", async (req, res, next) => {
-  try {
-    const client = db.connect();
+// router.post("/change", async (req, res, next) => {
+//   try {
+//     const client = await db.connect();
 
-    const { rows } = await client.query(
-      `
-        UPDATE INTO 
-      `
-    );
-  } catch (error) {
-    console.log(error);
-  }
-});
+//     const { rows } = await client.query(
+//       `
+//         UPDATE public.User SET
+//       `,
+//       [req.body.password]
+//     );
+
+//     console.log(rows);
+
+//     client.release();
+
+//     return res.status(200).send("change password");
+//   } catch (error) {
+//     console.log(error);
+//     return res.send(403).send(error);
+//   }
+// });
 
 module.exports = router;

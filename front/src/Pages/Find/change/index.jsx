@@ -1,6 +1,7 @@
 import useInput from '@Hooks/useInput';
 import axios from 'axios';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
 
 const FindPassword = () => {
@@ -29,8 +30,19 @@ const FindPassword = () => {
     }
   };
 
-  const changeSubmit = (e) => {
+  const changeSubmit = async (e) => {
     e.preventDefault();
+
+    const { data } = await axios.post('http://localhost:4190/api/users/change', {
+      password: password.value,
+    });
+
+    console.log(data);
+
+    if (password.value !== passwordConfirm.value) {
+      toast('비밀번호가 서로 일치하지 않습니다.');
+      return;
+    }
   };
 
   return (
