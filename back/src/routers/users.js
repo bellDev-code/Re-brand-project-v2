@@ -160,8 +160,8 @@ router.delete("/", async (req, res, next) => {
 
 // Check Register Data
 router.post("/check", async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.query);
+  // console.log(req.body);
+  // console.log(req.query);
 
   try {
     const query = req.query;
@@ -261,26 +261,32 @@ router.post("/password", async (req, res, next) => {
   }
 });
 
-// router.post("/change", async (req, res, next) => {
-//   try {
-//     const client = await db.connect();
+router.post("/change", async (req, res, next) => {
+  try {
+    // console.log(req.body);
 
-//     const { rows } = await client.query(
-//       `
-//         UPDATE public.User SET
-//       `,
-//       [req.body.password]
-//     );
+    const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
+    const hashed = await bcrypt.hash(req.body.password, salt);
 
-//     console.log(rows);
+    const client = await db.connect();
 
-//     client.release();
+    const { rows } = await client.query(
+      `
+        UPDATE public.User SET password=$1 WHERE username=$2
+      `,
+      [hashed, req.body.username]
+    );
 
-//     return res.status(200).send("change password");
-//   } catch (error) {
-//     console.log(error);
-//     return res.send(403).send(error);
-//   }
-// });
+    client.release();
+
+    return res.status(200).json({
+      success: true,
+      error: null,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).send(error.message);
+  }
+});
 
 module.exports = router;

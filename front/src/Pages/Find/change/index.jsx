@@ -1,6 +1,8 @@
 import useInput from '@Hooks/useInput';
+import { passwordRegex } from '@Utils/regex';
 import axios from 'axios';
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
 
@@ -9,6 +11,7 @@ const FindPassword = () => {
   const findResult = useInput('');
   const password = useInput('');
   const passwordConfirm = useInput('');
+  const history = useHistory();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -33,15 +36,35 @@ const FindPassword = () => {
   const changeSubmit = async (e) => {
     e.preventDefault();
 
-    const { data } = await axios.post('http://localhost:4190/api/users/change', {
-      password: password.value,
-    });
+    try {
+      const { data } = await axios.post('http://localhost:4190/api/users/change', {
+        password: password.value,
+        username: username.value,
+      });
 
-    console.log(data);
+      console.log(data);
 
-    if (password.value !== passwordConfirm.value) {
-      toast('비밀번호가 서로 일치하지 않습니다.');
-      return;
+      if (data?.success) {
+        history.push('/login');
+      }
+
+      if (!password.value) {
+        toast('비밀번호를 입력하세요.');
+        return;
+      }
+
+      if (!passwordRegex.test(password.value)) {
+        toast('비밀번호는 특수문자를 포함한 9~30자로 가능합니다.');
+        return;
+      }
+
+      if (password.value !== passwordConfirm.value) {
+        toast('비밀번호가 서로 일치하지 않습니다.');
+        return;
+      }
+    } catch (error) {
+      toast(error.response?.data?.error);
+      console.log(error.response);
     }
   };
 
