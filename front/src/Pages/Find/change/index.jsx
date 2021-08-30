@@ -21,8 +21,6 @@ const FindPassword = () => {
         username: username.value,
       });
 
-      console.log(data);
-
       if (data) {
         findResult.setValue(data);
         return;
@@ -44,10 +42,6 @@ const FindPassword = () => {
 
       console.log(data);
 
-      if (data?.success) {
-        history.push('/login');
-      }
-
       if (!password.value) {
         toast('비밀번호를 입력하세요.');
         return;
@@ -61,6 +55,10 @@ const FindPassword = () => {
       if (password.value !== passwordConfirm.value) {
         toast('비밀번호가 서로 일치하지 않습니다.');
         return;
+      }
+
+      if (data?.success) {
+        history.push('/login');
       }
     } catch (error) {
       toast(error.response?.data?.error);
