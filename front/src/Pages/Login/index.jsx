@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { Container, AccountForm, LoginForm, ButtonWrapper, LoginBtn } from './styles';
 import LabelInput from '@Components/LabelInput';
@@ -8,7 +8,7 @@ import { AuthContext } from '@Hooks/Contexts/AuthContext';
 
 const Login = () => {
   const history = useHistory();
-  const { refetch } = useContext(AuthContext);
+  const { refetch, user } = useContext(AuthContext);
 
   const onSubmit = useCallback(
     async (e) => {
@@ -40,6 +40,14 @@ const Login = () => {
     },
     [history],
   );
+
+  if (user) {
+    return <Redirect to="/" />;
+  }
+
+  if (user === undefined) {
+    return null;
+  }
 
   return (
     <Container>
