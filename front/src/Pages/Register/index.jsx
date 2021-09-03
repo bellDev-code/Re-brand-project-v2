@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Container, AccountForm, RegisterForm, InputWrapper, ButtonWrapper, RegisterBtn } from './styles';
 import useInput from '@Hooks/useInput';
 import axios from 'axios';
@@ -9,79 +9,82 @@ import { emailRegex, idRegex, nickNameRegex, passwordRegex } from '@Utils/regex'
 const Register = () => {
   const history = useHistory();
 
-  const username = useInput('Lee');
-  const email = useInput('sumaoo20@naver.com');
-  const password = useInput('1234');
-  const passwordConfirm = useInput('1234');
-  const name = useInput('이종호');
+  const username = useInput('');
+  const email = useInput('');
+  const password = useInput('');
+  const passwordConfirm = useInput('');
+  const name = useInput('');
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
+  const onSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
 
-    if (!username.value) {
-      toast('아이디를 입력하세요.');
-      return;
-    }
-
-    if (!idRegex.test(username.value)) {
-      toast('아이디는 영소문자, 숫자를 조합한 5~20자로 가능합니다');
-      return;
-    }
-
-    if (!name.value) {
-      toast('이름을 입력하세요.');
-      return;
-    }
-
-    if (!nickNameRegex.test(name.value)) {
-      toast('닉네임은 영대소문자, 한글, 숫자, 특수문자(".", "_", "-")를 사용한 2~16자로 가능합니다.');
-      return;
-    }
-
-    if (!email.value) {
-      toast('이메일을 입력하세요.');
-      return;
-    }
-
-    if (!emailRegex.test(email.value)) {
-      toast('이메일 형식이 올바르지 않습니다.');
-      return;
-    }
-
-    if (!password.value) {
-      toast('비밀번호를 입력하세요.');
-      return;
-    }
-
-    if (!passwordRegex.test(password.value)) {
-      toast('비밀번호는 특수문자를 포함한 9~30자로 가능합니다.');
-      return;
-    }
-
-    if (password.value !== passwordConfirm.value) {
-      toast('비밀번호가 서로 일치하지 않습니다.');
-      return;
-    }
-
-    try {
-      const { data } = await axios.post('http://localhost:4190/api/users', {
-        username: username.value,
-        password: password.value,
-        email: email.value,
-        name: name.value,
-      });
-      console.log(data);
-
-      if (data?.success) {
-        history.push('/login');
+      if (!username.value) {
+        toast('아이디를 입력하세요.');
+        return;
       }
-    } catch (error) {
-      toast(error.response?.data?.error);
-      console.log(error.response);
-    }
-  };
 
-  const checkUsername = async () => {
+      if (!idRegex.test(username.value)) {
+        toast('아이디는 영소문자, 숫자를 조합한 5~20자로 가능합니다');
+        return;
+      }
+
+      if (!name.value) {
+        toast('이름을 입력하세요.');
+        return;
+      }
+
+      if (!nickNameRegex.test(name.value)) {
+        toast('닉네임은 영대소문자, 한글, 숫자, 특수문자(".", "_", "-")를 사용한 2~16자로 가능합니다.');
+        return;
+      }
+
+      if (!email.value) {
+        toast('이메일을 입력하세요.');
+        return;
+      }
+
+      if (!emailRegex.test(email.value)) {
+        toast('이메일 형식이 올바르지 않습니다.');
+        return;
+      }
+
+      if (!password.value) {
+        toast('비밀번호를 입력하세요.');
+        return;
+      }
+
+      if (!passwordRegex.test(password.value)) {
+        toast('비밀번호는 특수문자를 포함한 9~30자로 가능합니다.');
+        return;
+      }
+
+      if (password.value !== passwordConfirm.value) {
+        toast('비밀번호가 서로 일치하지 않습니다.');
+        return;
+      }
+
+      try {
+        const { data } = await axios.post('http://localhost:4190/api/users', {
+          username: username.value,
+          password: password.value,
+          email: email.value,
+          name: name.value,
+        });
+        console.log(data);
+
+        if (data?.success) {
+          history.push('/login');
+        }
+      } catch (error) {
+        toast(error.response?.data?.error);
+        console.log(error.response);
+      }
+    },
+    [username.value, password.value, email.value, name.value, passwordConfirm.value],
+  );
+
+  const checkUsername = useCallback(async () => {
     try {
       const { data } = await axios.post('http://localhost:4190/api/users/check?type=username', {
         payload: username.value,
@@ -94,9 +97,9 @@ const Register = () => {
       console.log(error);
       username.setError(error.response?.data?.error);
     }
-  };
+  }, [username.value]);
 
-  const checkEmail = async () => {
+  const checkEmail = useCallback(async () => {
     try {
       const { data } = await axios.post('http://localhost:4190/api/users/check?type=email', {
         payload: email.value,
@@ -109,7 +112,7 @@ const Register = () => {
       console.log(error);
       email.setError(error.response?.data?.error);
     }
-  };
+  }, [email.value]);
 
   return (
     <Container>

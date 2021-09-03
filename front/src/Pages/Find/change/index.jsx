@@ -1,7 +1,7 @@
 import useInput from '@Hooks/useInput';
 import { passwordRegex } from '@Utils/regex';
 import axios from 'axios';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
@@ -13,64 +13,70 @@ const FindPassword = () => {
   const passwordConfirm = useInput('');
   const history = useHistory();
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const findPassword = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    try {
-      const { data } = await axios.post('http://localhost:4190/api/users/password', {
-        username: username.value,
-      });
+      try {
+        const { data } = await axios.post('http://localhost:4190/api/users/password', {
+          username: username.value,
+        });
 
-      if (data) {
-        findResult.setValue(data);
-        return;
+        if (data) {
+          findResult.setValue(data);
+          return;
+        }
+        throw new Error('알 수 없는 오류');
+      } catch (error) {
+        console.log(error.message);
       }
-      throw new Error('알 수 없는 오류');
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+    },
+    [username.value],
+  );
 
-  const changeSubmit = async (e) => {
-    e.preventDefault();
+  const changeSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    try {
-      const { data } = await axios.post('http://localhost:4190/api/users/change', {
-        password: password.value,
-        username: username.value,
-      });
+      try {
+        const { data } = await axios.post('http://localhost:4190/api/users/change', {
+          password: password.value,
+          username: username.value,
+        });
 
-      console.log(data);
+        console.log(data);
 
-      if (!password.value) {
-        toast('비밀번호를 입력하세요.');
-        return;
+        if (!password.value) {
+          toast('비밀번호를 입력하세요.');
+          return;
+        }
+
+        if (!passwordRegex.test(password.value)) {
+          toast('비밀번호는 특수문자를 포함한 9~30자로 가능합니다.');
+          return;
+        }
+
+        if (password.value !== passwordConfirm.value) {
+          toast('비밀번호가 서로 일치하지 않습니다.');
+          return;
+        }
+
+        if (data?.success) {
+          history.push('/login');
+        }
+      } catch (error) {
+        toast(error.response?.data?.error);
+        console.log(error.response);
       }
-
-      if (!passwordRegex.test(password.value)) {
-        toast('비밀번호는 특수문자를 포함한 9~30자로 가능합니다.');
-        return;
-      }
-
-      if (password.value !== passwordConfirm.value) {
-        toast('비밀번호가 서로 일치하지 않습니다.');
-        return;
-      }
-
-      if (data?.success) {
-        history.push('/login');
-      }
-    } catch (error) {
-      toast(error.response?.data?.error);
-      console.log(error.response);
-    }
-  };
+    },
+    [password.value, username.value, passwordConfirm.value],
+  );
 
   return (
     <Container>
       <AccountForm>
         <h3>Change Password</h3>
-        <FindForm onSubmit={onSubmit}>
+        <FindForm onSubmit={findPassword}>
           <InputWrapper>
             <label>username</label>
             <input type="text" value={username.value} onChange={username.onChange} />
