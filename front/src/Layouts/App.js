@@ -22,7 +22,7 @@ const App = () => {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/find" component={Find} />
-            <Route path="/change" component={Change} />
+            <Route path="/change/:username" component={Change} />
           </AuthContextProvider>
         </Switch>
       </Router>

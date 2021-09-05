@@ -1,31 +1,25 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn } from './styles';
 import useInput from '@Hooks/useInput';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router';
 
 const Find = () => {
+  const history = useHistory();
+
   const email = useInput('sumaoo20@naver.com');
-  const findResult = useInput('');
+  const foundUsername = useInput();
 
-  // useEffect(() => {
-  //   effect
-  //   return () => {
-  //     cleanup
-  //   }
-  // }, [input])
+  const foundDescription = useMemo(() => {
+    // 성능 최적화
+    if (!foundUsername.value) {
+      return null;
+    }
+    return `당신의 username은 ${foundUsername.value}입니다`;
+  }, [foundUsername.value]);
 
-  //   const doubleEmail = useMemo(() => {
-  //     let result = '';
+  const findError = useInput();
 
-  //     for (let i = 0; i < email.value.length; i++) {
-  //       result += email.value[i] * i;
-  //     }
-
-  //     return result;
-  //   }, [email.value, findResult.value]);
-
-  //   console.log(doubleEmail);
   const onSubmit = useCallback(
     async (e) => {
       e.preventDefault();
@@ -35,20 +29,26 @@ const Find = () => {
           email: email.value,
         });
         if (data) {
-          findResult.setValue(`당신의 username은 ${data.username}입니다`);
+          foundUsername.setValue(data.username);
+          findError.setValue('');
           return;
         }
         throw new Error('알 수 없는 오류');
       } catch (error) {
+        foundUsername.setValue('');
         if (axios.isAxiosError(error)) {
-          findResult.setValue(error.response.data);
+          findError.setValue(error.response.data);
         } else {
-          findResult.setValue(error.message);
+          findError.setValue(error.message);
         }
       }
     },
     [email.value],
   );
+
+  const onClickChange = useCallback(() => {
+    history.push(`/change/${foundUsername.value}`);
+  }, [history, foundUsername.value]);
 
   return (
     <Container>
@@ -59,11 +59,11 @@ const Find = () => {
             <label>Email</label>
             <input type="email" value={email.value} onChange={email.onChange} />
           </InputWrapper>
-          {findResult.value && <h3>{findResult.value}</h3>}
-          {findResult.value && <Link to="/change">비밀번호 변경하기</Link>}
+          {foundDescription && <h3>{foundDescription}</h3>}
+          {findError.value && <h3>{findError.value}</h3>}
+          {foundDescription && <button onClick={onClickChange}>비밀번호 변경하기</button>}
           <ButtonWrapper>
             <FindBtn type="submit">Find</FindBtn>
-            {/* {doubleEmail} */}
           </ButtonWrapper>
         </FindForm>
       </AccountForm>

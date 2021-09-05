@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
 
-const FindPassword = () => {
+const ChangePassword = () => {
   const username = useInput('');
   const findResult = useInput('');
   const password = useInput('');
@@ -107,4 +107,4 @@ const FindPassword = () => {
   );
 };
 
-export default FindPassword;
+export default ChangePassword;
