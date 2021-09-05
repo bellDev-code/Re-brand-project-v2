@@ -2,37 +2,24 @@ import useInput from '@Hooks/useInput';
 import { passwordRegex } from '@Utils/regex';
 import axios from 'axios';
 import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, withRouter, useParams, Redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Container, AccountForm, FindForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
+import { Container, AccountForm, InputWrapper, ButtonWrapper, FindBtn, ChangeForm } from './styles';
 
 const ChangePassword = () => {
-  const username = useInput('');
+  const params = useParams();
+
+  const { username: usernameParam } = params;
+  if (!usernameParam) {
+    return <Redirect to="/login" />;
+  }
+
+  console.log(params.username);
+
   const findResult = useInput('');
   const password = useInput('');
   const passwordConfirm = useInput('');
   const history = useHistory();
-
-  const findPassword = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      try {
-        const { data } = await axios.post('http://localhost:4190/api/users/password', {
-          username: username.value,
-        });
-
-        if (data) {
-          findResult.setValue(data);
-          return;
-        }
-        throw new Error('알 수 없는 오류');
-      } catch (error) {
-        console.log(error.message);
-      }
-    },
-    [username.value],
-  );
 
   const changeSubmit = useCallback(
     async (e) => {
@@ -41,7 +28,7 @@ const ChangePassword = () => {
       try {
         const { data } = await axios.post('http://localhost:4190/api/users/change', {
           password: password.value,
-          username: username.value,
+          username: usernameParam,
         });
 
         console.log(data);
@@ -69,23 +56,13 @@ const ChangePassword = () => {
         console.log(error.response);
       }
     },
-    [password.value, username.value, passwordConfirm.value],
+    [password.value, passwordConfirm.value],
   );
 
   return (
     <Container>
       <AccountForm>
         <h3>Change Password</h3>
-        <FindForm onSubmit={findPassword}>
-          <InputWrapper>
-            <label>username</label>
-            <input type="text" value={username.value} onChange={username.onChange} />
-          </InputWrapper>
-
-          <ButtonWrapper>
-            <FindBtn type="submit">Find</FindBtn>
-          </ButtonWrapper>
-        </FindForm>
         <ChangeForm onSubmit={changeSubmit}>
           <InputWrapper>
             {findResult.value && (
@@ -107,4 +84,4 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+export default withRouter(ChangePassword);

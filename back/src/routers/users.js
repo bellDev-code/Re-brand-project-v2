@@ -3,8 +3,10 @@ const db = require("../db");
 const dayjs = require("dayjs");
 const { emailRegex } = require("../utils/regex.js");
 const bcrypt = require("bcrypt");
+
 const passport = require("passport");
 const { IsLoggedIn } = require("../middlewares/auth");
+const { sendEmail } = require("../utils/email");
 
 // JOIN USER
 router.post("/", async (req, res, next) => {
@@ -35,7 +37,7 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO public.User (username, password, name, email, createdAt)
+        INSERT INTO public.User (username, password, name, email, "createdAt")
         VALUES ($1, $2, $3, $4, $5)
       `,
       [req.body.username, hashed, req.body.name, req.body.email, now]
@@ -80,7 +82,7 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await client.query(
       `
-        SELECT id, name, email, createdAt FROM public.User WHERE id = $1
+        SELECT id, name, email, "createdAt" FROM public.User WHERE id = $1
       `,
       [parseInt(id)]
     );
@@ -118,7 +120,7 @@ router.post("/login", async (req, res, next) => {
         const client = await db.connect();
         const { rows } = await client.query(
           `
-        SELECT id, email, name, createdAt FROM public.user WHERE id = $1 
+        SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1 
       `,
           [user.id]
         );
@@ -211,27 +213,99 @@ router.post("/check", async (req, res, next) => {
 });
 
 router.post("/find", async (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
   try {
     const client = await db.connect();
 
     const { rows } = await client.query(
       `
-        SELECT username FROM public.User WHERE email = $1
+        SELECT username, email FROM public.User WHERE email = $1
       `,
       [req.body.email]
     );
-
-    client.release();
 
     if (!rows.length) {
       throw new Error("해당 이메일을 가진 유저가 없습니다.");
     }
 
-    return res.status(200).json(rows[0]);
+    await client.query(
+      `
+        DELETE FROM public.verification WHERE payload = $1
+      `,
+      [rows[0].email]
+    );
+
+    const expireAt = dayjs().minute(dayjs().minute() + 5);
+    const code = (Math.random() * 1000000).toFixed(0);
+
+    client.query(
+      `
+        INSERT INTO public.verification (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
+      `,
+      ["EMAIL", rows[0].email, code, false, expireAt.format()]
+    );
+
+    client.release();
+
+    await sendEmail({
+      to: rows[0].email,
+      subject: "Re-brand 아이디 찾기 메일입니다.",
+      text: `인증 코드는 ${code}입니다.`,
+    });
+
+    return res.status(200).json({
+      success: true,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(403).send(error.message);
+    return res.status(403).send({ success: false, error: error.message });
+  }
+});
+
+router.post("/find/verify", async (req, res, next) => {
+  try {
+    const { payload, code } = req.body;
+
+    const client = await db.connect();
+
+    const { rows } = await client.query(
+      `
+        SELECT * FROM public.verification WHERE payload = $1 AND code = $2
+      `,
+      [payload, code]
+    );
+
+    if (!rows.length) {
+      throw new Error("인증코드가 일치하지 않습니다.");
+    }
+
+    const verification = rows[0];
+
+    if (verification.isVerified) {
+      throw new Error("인증 오류");
+    }
+
+    if (dayjs(verification.expiredAt).format() < dayjs().format()) {
+      throw new Error("인증 유효시간이 지났습니다.");
+    }
+
+    const userQuery = await client.query(
+      ` 
+        SELECT username, email FROM public.User WHERE email = $1
+      `,
+      [verification.payload]
+    );
+
+    if (!userQuery.rows.length) {
+      throw new Error("유저를 찾을 수 없습니다.");
+    }
+
+    return res.json({
+      success: true,
+      username: userQuery.rows[0].username,
+    });
+  } catch (error) {
+    return res.status(400).send({ success: false, error: error.message });
   }
 });
 
@@ -251,8 +325,6 @@ router.post("/password", async (req, res, next) => {
     if (!rows.length) {
       throw new Error("해당 username을 가진 데이터가 없습니다.");
     }
-
-    console.log(rows[0]);
 
     return res.status(200).json(rows[0]);
   } catch (error) {

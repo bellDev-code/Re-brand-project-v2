@@ -62,7 +62,7 @@ const Login = () => {
           <Link to="/register" style={{ paddingTop: '20px' }}>
             Create Your Account?
           </Link>
-          <Link to="/find">Find Your Username?</Link>
+          <Link to="/find/username">Find Your Username?</Link>
         </LoginForm>
       </AccountForm>
     </Container>

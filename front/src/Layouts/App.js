@@ -4,11 +4,12 @@ import Main from './Main';
 import MainShop from './MainShop';
 import Login from '@Pages/Login';
 import Register from '@Pages/Register';
-import Find from '@Pages/Find/user';
+import FindUsername from '@Pages/Find/FindUsername';
 import Change from '@Pages/Find/change';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { AuthContextProvider } from '@Hooks/Contexts/AuthContext';
+import FindPassword from '@Pages/Find/FindPassword';
 
 const App = () => {
   return (
@@ -21,7 +22,8 @@ const App = () => {
             <Route path="/shop" component={MainShop} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
-            <Route path="/find" component={Find} />
+            <Route path="/find/username" component={FindUsername} />
+            <Route path="/find/password" component={FindPassword} />
             <Route path="/change/:username" component={Change} />
           </AuthContextProvider>
         </Switch>

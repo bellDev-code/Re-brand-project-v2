@@ -22,11 +22,25 @@ const initialize = async () => {
         username    TEXT    NOT NULL    UNIQUE,
         password    TEXT    NOT NULL,
         name        TEXT    NOT NULL,
-        createdAt    TIMESTAMP   NOT NULL,
+        "createdAt"    TIMESTAMP   NOT NULL,
         email       TEXT    NOT NULL    UNIQUE
       )
     `
   );
+
+  await client.query(
+    `
+    CREATE TABLE IF NOT EXISTS public.Verification(
+      id        SERIAL    PRIMARY KEY,
+      type      TEXT      NOT NULL,
+      payload   TEXT      NOT NULL,
+      code      TEXT      NOT NULL,
+      "isVerified" BOOLEAN  NOT NULL, 
+      "expiredAt" TIMESTAMP NOT NULL
+    )
+    `
+  );
+
   await client.release();
 };
 
