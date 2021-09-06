@@ -134,21 +134,6 @@ router.post("/login", async (req, res, next) => {
         });
       });
     })(req, res, next);
-
-    // req.session.userId = user.id;
-    // req.session.save(() => {
-    //   return res.json({
-    //     success: true,
-    //     error: null,
-    //     data: null,
-    //   });
-    // });
-
-    // return res.json({
-    //   success: true,
-    //   error: null,
-    //   data: null,
-    // });
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);
@@ -162,9 +147,6 @@ router.delete("/", async (req, res, next) => {
 
 // Check Register Data
 router.post("/check", async (req, res, next) => {
-  // console.log(req.body);
-  // console.log(req.query);
-
   try {
     const query = req.query;
 
@@ -212,6 +194,7 @@ router.post("/check", async (req, res, next) => {
   }
 });
 
+// Find Username
 router.post("/find", async (req, res, next) => {
   console.log(req.body);
   try {
@@ -262,6 +245,7 @@ router.post("/find", async (req, res, next) => {
   }
 });
 
+// Verify Code
 router.post("/find/verify", async (req, res, next) => {
   try {
     const { payload, code } = req.body;
@@ -281,6 +265,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     const verification = rows[0];
 
+    // isVerified가 client에서는 기본값이 false이기 때문에
     if (verification.isVerified) {
       throw new Error("인증 오류");
     }
@@ -333,10 +318,9 @@ router.post("/password", async (req, res, next) => {
   }
 });
 
+// Change Password
 router.post("/change", async (req, res, next) => {
   try {
-    // console.log(req.body);
-
     const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
     const hashed = await bcrypt.hash(req.body.password, salt);
 

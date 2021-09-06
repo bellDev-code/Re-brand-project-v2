@@ -79,7 +79,7 @@ const Find = () => {
         setIsVerified(false);
       }
 
-      console.log(code);
+      // console.log(code);
     },
     [email.value],
   );
