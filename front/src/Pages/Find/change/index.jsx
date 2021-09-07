@@ -14,8 +14,6 @@ const ChangePassword = () => {
     return <Redirect to="/login" />;
   }
 
-  console.log(params.username);
-
   const findResult = useInput('');
   const password = useInput('');
   const passwordConfirm = useInput('');
