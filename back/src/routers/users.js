@@ -196,7 +196,6 @@ router.post("/check", async (req, res, next) => {
 
 // Find Username
 router.post("/find", async (req, res, next) => {
-  console.log(req.body);
   try {
     const client = await db.connect();
 
@@ -276,7 +275,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     const userQuery = await client.query(
       ` 
-        SELECT username, email FROM public.User WHERE email = $1
+        SELECT username, email, password FROM public.User WHERE email = $1
       `,
       [verification.payload]
     );
@@ -288,28 +287,56 @@ router.post("/find/verify", async (req, res, next) => {
     return res.json({
       success: true,
       username: userQuery.rows[0].username,
+      password: userQuery.rows[0].password,
     });
   } catch (error) {
     return res.status(400).send({ success: false, error: error.message });
   }
 });
 
+// Find Password
 router.post("/password", async (req, res, next) => {
   try {
     const client = await db.connect();
 
     const { rows } = await client.query(
       `
-        SELECT password FROM public.User WHERE username = $1
+        SELECT password, email FROM public.User WHERE email = $1
       `,
-      [req.body.username]
+      [req.body.email]
+    );
+
+    console.log(rows);
+
+    if (!rows.length) {
+      throw new Error("해당 email을 가진 데이터가 없습니다.");
+    }
+
+    await client.query(
+      `
+        DELETE FROM public.verification WHERE payload = $1
+      `,
+      [rows[0].email]
+    );
+
+    const expireAt = dayjs().minute(dayjs().minute() + 5);
+
+    const code = (Math.random() * 1000000).toFixed(0);
+
+    client.query(
+      `
+        INSERT INTO public.verification (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
+      `,
+      ["EMAIL", rows[0].email, code, false, expireAt.format()]
     );
 
     client.release();
 
-    if (!rows.length) {
-      throw new Error("해당 username을 가진 데이터가 없습니다.");
-    }
+    await sendEmail({
+      to: rows[0].email,
+      subject: "Re-brand 비밀번호 찾기 메일입니다.",
+      text: `인증 코드는 ${code}입니다.`,
+    });
 
     return res.status(200).json(rows[0]);
   } catch (error) {
