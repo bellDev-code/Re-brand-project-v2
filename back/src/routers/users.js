@@ -37,11 +37,12 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO public.User (username, password, name, email, "createdAt")
+        INSERT INTO public.User (username, password, name, "createdAt", email )
         VALUES ($1, $2, $3, $4, $5)
       `,
-      [req.body.username, hashed, req.body.name, req.body.email, now]
+      [req.body.username, hashed, req.body.name, now, req.body.email]
     );
+
     client.release();
 
     return res.json({
@@ -124,6 +125,8 @@ router.post("/login", async (req, res, next) => {
       `,
           [user.id]
         );
+
+        console.log(rows);
 
         client.release();
 
@@ -287,7 +290,6 @@ router.post("/find/verify", async (req, res, next) => {
     return res.json({
       success: true,
       username: userQuery.rows[0].username,
-      password: userQuery.rows[0].password,
     });
   } catch (error) {
     return res.status(400).send({ success: false, error: error.message });
@@ -301,7 +303,7 @@ router.post("/password", async (req, res, next) => {
 
     const { rows } = await client.query(
       `
-        SELECT password, email FROM public.User WHERE email = $1
+        SELECT username, email FROM public.User WHERE email = $1
       `,
       [req.body.email]
     );
