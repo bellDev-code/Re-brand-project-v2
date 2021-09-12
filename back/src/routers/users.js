@@ -303,10 +303,8 @@ router.post("/find/change", async (req, res, next) => {
       code: verifyCode,
     });
 
-    // 이미 인증된 데이터거나 인증 만료시간이 지났을 경우 check
     validVerification(verification);
 
-    // 인증은 1회만 가능하도록 isVerified true 인증
     await expireVerification(client, verification);
 
     const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
