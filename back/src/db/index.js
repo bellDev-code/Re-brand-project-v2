@@ -18,12 +18,13 @@ const initialize = async () => {
   await client.query(
     `
       CREATE TABLE IF NOT EXISTS public.User(
-        id    SERIAL     PRIMARY KEY,
-        username    TEXT    NOT NULL    UNIQUE,
-        password    TEXT    NOT NULL,
-        name        TEXT    NOT NULL,
-        "createdAt"    TIMESTAMP   NOT NULL,
-        email       TEXT    NOT NULL    UNIQUE
+        id            SERIAL     PRIMARY KEY,
+        username      TEXT       NOT NULL    UNIQUE,
+        password      TEXT       NOT NULL,
+        name          TEXT       NOT NULL,
+        "createdAt"   TIMESTAMP  NOT NULL,
+        email         TEXT       NOT NULL    UNIQUE,
+        "phoneNumber" TEXT       UNIQUE
       )
     `
   );
@@ -31,12 +32,12 @@ const initialize = async () => {
   await client.query(
     `
     CREATE TABLE IF NOT EXISTS public.Verification(
-      id        SERIAL    PRIMARY KEY,
-      type      TEXT      NOT NULL,
-      payload   TEXT      NOT NULL,
-      code      TEXT      NOT NULL,
-      "isVerified" BOOLEAN  NOT NULL, 
-      "expiredAt" TIMESTAMP NOT NULL
+      id            SERIAL      PRIMARY KEY,
+      type          TEXT        NOT NULL,
+      payload       TEXT        NOT NULL,
+      code          TEXT        NOT NULL,
+      "isVerified"  BOOLEAN     NOT NULL, 
+      "expiredAt"   TIMESTAMP   NOT NULL
     )
     `
   );

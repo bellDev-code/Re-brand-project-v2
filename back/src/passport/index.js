@@ -14,7 +14,7 @@ module.exports = (app) => {
       const connect = await db.connect();
       const { rows } = await connect.query(
         `
-        SELECT id, email, name, createdAt FROM public.user WHERE id = $1
+        SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1
       `,
         [userId]
       );
