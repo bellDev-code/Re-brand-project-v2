@@ -17,7 +17,7 @@ const Find = () => {
     if (!foundUsername.value) {
       return null;
     }
-    return `당신의 username은 ${foundUsername.value}입니다`;
+    return `당신의 아이디는 ${foundUsername.value}입니다`;
   }, [foundUsername.value]);
 
   const [isSendEmail, setIsSendEmail] = useState(false);
@@ -28,8 +28,8 @@ const Find = () => {
       e.preventDefault();
 
       try {
-        const { data } = await axios.post('http://localhost:4190/api/users/find', {
-          email: email.value,
+        const { data } = await axios.post('http://localhost:4190/api/users/find/send?type=email', {
+          payload: email.value,
         });
         if (data?.success) {
           setIsSendEmail(true);

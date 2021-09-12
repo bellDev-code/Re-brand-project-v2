@@ -8,6 +8,16 @@ const passport = require("passport");
 const { IsLoggedIn } = require("../middlewares/auth");
 const { sendEmail } = require("../utils/email");
 
+const {
+  findUserByVerification,
+  createVerification,
+  sendVerification,
+  findVerification,
+  checkVerifyType,
+  expireVerification,
+  validVerification,
+} = require("../verification/verification.js");
+
 // JOIN USER
 router.post("/", async (req, res, next) => {
   const now = dayjs().format();
@@ -88,6 +98,8 @@ router.get("/:id", async (req, res, next) => {
       [parseInt(id)]
     );
 
+    console.log(result);
+
     client.release();
 
     if (result.rows.length < 1) {
@@ -119,6 +131,7 @@ router.post("/login", async (req, res, next) => {
         }
 
         const client = await db.connect();
+
         const { rows } = await client.query(
           `
         SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1 
@@ -138,7 +151,7 @@ router.post("/login", async (req, res, next) => {
       });
     })(req, res, next);
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return res.status(403).send(error.message);
   }
 });
@@ -198,45 +211,29 @@ router.post("/check", async (req, res, next) => {
 });
 
 // Find Username
-router.post("/find", async (req, res, next) => {
+router.post("/find/send", async (req, res, next) => {
   try {
+    const { type } = req.query;
+
+    const payload = req.body.payload;
+
+    checkVerifyType(type);
+
     const client = await db.connect();
 
-    const { rows } = await client.query(
-      `
-        SELECT username, email FROM public.User WHERE email = $1
-      `,
-      [req.body.email]
-    );
+    const user = await findUserByVerification(client, {
+      type: type,
+      payload: payload,
+    });
 
-    if (!rows.length) {
-      throw new Error("해당 이메일을 가진 유저가 없습니다.");
-    }
-
-    await client.query(
-      `
-        DELETE FROM public.verification WHERE payload = $1
-      `,
-      [rows[0].email]
-    );
-
-    const expireAt = dayjs().minute(dayjs().minute() + 5);
-    const code = (Math.random() * 1000000).toFixed(0);
-
-    client.query(
-      `
-        INSERT INTO public.verification (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
-      `,
-      ["EMAIL", rows[0].email, code, false, expireAt.format()]
-    );
+    const verification = await createVerification(client, {
+      type: type,
+      payload: payload,
+    });
 
     client.release();
 
-    await sendEmail({
-      to: rows[0].email,
-      subject: "Re-brand 아이디 찾기 메일입니다.",
-      text: `인증 코드는 ${code}입니다.`,
-    });
+    await sendVerification(type, user, verification.code);
 
     return res.status(200).json({
       success: true,
@@ -267,14 +264,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     const verification = rows[0];
 
-    // isVerified가 client에서는 기본값이 false이기 때문에
-    if (verification.isVerified) {
-      throw new Error("인증 오류");
-    }
-
-    if (dayjs(verification.expiredAt).format() < dayjs().format()) {
-      throw new Error("인증 유효시간이 지났습니다.");
-    }
+    validVerification(verification);
 
     const userQuery = await client.query(
       ` 
@@ -296,71 +286,52 @@ router.post("/find/verify", async (req, res, next) => {
   }
 });
 
-// Find Password
-router.post("/password", async (req, res, next) => {
+// Change Password
+router.post("/find/change", async (req, res, next) => {
   try {
+    const { type } = req.query;
+    const { payload, verifyCode, changePassword } = req.body;
+
+    checkVerifyType(type);
+
     const client = await db.connect();
 
-    const { rows } = await client.query(
-      `
-        SELECT username, email FROM public.User WHERE email = $1
-      `,
-      [req.body.email]
-    );
-
-    console.log(rows);
-
-    if (!rows.length) {
-      throw new Error("해당 email을 가진 데이터가 없습니다.");
-    }
-
-    await client.query(
-      `
-        DELETE FROM public.verification WHERE payload = $1
-      `,
-      [rows[0].email]
-    );
-
-    const expireAt = dayjs().minute(dayjs().minute() + 5);
-
-    const code = (Math.random() * 1000000).toFixed(0);
-
-    client.query(
-      `
-        INSERT INTO public.verification (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
-      `,
-      ["EMAIL", rows[0].email, code, false, expireAt.format()]
-    );
-
-    client.release();
-
-    await sendEmail({
-      to: rows[0].email,
-      subject: "Re-brand 비밀번호 찾기 메일입니다.",
-      text: `인증 코드는 ${code}입니다.`,
+    // no error 시 인증성공
+    const verification = await findVerification(client, {
+      type,
+      payload,
+      code: verifyCode,
     });
 
-    return res.status(200).json(rows[0]);
-  } catch (error) {
-    console.log(error);
-    return res.status(403).send(error.message);
-  }
-});
+    // 이미 인증된 데이터거나 인증 만료시간이 지났을 경우 check
+    validVerification(verification);
 
-// Change Password
-router.post("/change", async (req, res, next) => {
-  try {
+    // 인증은 1회만 가능하도록 isVerified true 인증
+    await expireVerification(client, verification);
+
     const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
-    const hashed = await bcrypt.hash(req.body.password, salt);
+    const hashed = await bcrypt.hash(changePassword, salt);
 
-    const client = await db.connect();
-
-    const { rows } = await client.query(
-      `
-        UPDATE public.User SET password=$1 WHERE username=$2
-      `,
-      [hashed, req.body.username]
-    );
+    switch (type) {
+      case "email":
+        await await client.query(
+          `
+          UPDATE public.User SET password=$1 WHERE email=$2
+        `,
+          [hashed, payload]
+        );
+        break;
+      case "phone":
+        await client.query(
+          `
+            UPDATE public.User SET password=$1 WHERE "phoneNumber"=$2
+          `,
+          [hashed, payload]
+        );
+        break;
+      default:
+        throw new Error("올바르지 않은 verification type입니다.");
+    }
 
     client.release();
 

@@ -63,6 +63,7 @@ const Login = () => {
             Create Your Account?
           </Link>
           <Link to="/find/username">Find Your Username?</Link>
+          <Link to="/find/password">Find Your Password?</Link>
         </LoginForm>
       </AccountForm>
     </Container>

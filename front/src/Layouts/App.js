@@ -5,7 +5,7 @@ import MainShop from './MainShop';
 import Login from '@Pages/Login';
 import Register from '@Pages/Register';
 import FindUsername from '@Pages/Find/FindUsername';
-import Change from '@Pages/Find/change';
+import Change from '@Pages/Find/Change';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import { AuthContextProvider } from '@Hooks/Contexts/AuthContext';
