@@ -1,7 +1,12 @@
-// 데이터의 목적이 다르기 때문에 client, {type, payload}로 구별한다.
 const dayjs = require("dayjs");
 const { sendEmail } = require("../utils/email");
 const { sendPhoneSMS } = require("../utils/phone");
+
+// 목적이 다르기 때문에 client, {type, payload}로 구별한다.
+
+/**
+ * @description findUserByVerification 함수는 type이 email인지 phone인지 확인한다.
+ */
 const findUserByVerification = async (client, { type, payload }) => {
   // 초기화 기존 let = rows; 올바르지 않은 타입이 들어와서 rows.length에서 오류가 난다.
   let rows = [];
@@ -42,7 +47,6 @@ const findUserByVerification = async (client, { type, payload }) => {
 /**
  * @description create 함수 => create 로직 후 생성된 데이터까지 return
  */
-
 const createVerification = async (client, { type, payload }) => {
   await client.query(
     `
@@ -73,6 +77,10 @@ const createVerification = async (client, { type, payload }) => {
   };
 };
 
+/**
+ *
+ * @description findVerification 함수는 올바른 인증코드인지 확인한다.
+ */
 const findVerification = async (client, { type, payload, code }) => {
   const { rows } = await client.query(
     `
@@ -87,6 +95,9 @@ const findVerification = async (client, { type, payload, code }) => {
   return rows[0];
 };
 
+/**
+ * @description 인증은 1회만 가능하도록 isVerified = true 인증
+ */
 const expireVerification = async (client, verification) => {
   console.log(verification);
   await client.query(
@@ -101,6 +112,9 @@ const expireVerification = async (client, verification) => {
   };
 };
 
+/**
+ * @description sendVerification 함수는 type에 따라 email 인증 메세지, phone 인증 메세지
+ */
 const sendVerification = async (type, user, code) => {
   switch (type) {
     case "email":
@@ -121,12 +135,18 @@ const sendVerification = async (type, user, code) => {
   }
 };
 
+/**
+ * @description checkVerifyType type 확인 하는 함수
+ */
 const checkVerifyType = (type) => {
   if (!type && (type !== "email" || type !== "phone")) {
     throw new Error("type이 올바르지 않습니다.");
   }
 };
 
+/**
+ * @description validVerification 함수는 이미 인증된 데이터거나 인증 만료시간이 지났을 경우 check
+ */
 const validVerification = (verification) => {
   // isVerified가 client에서는 기본값이 false이기 때문에
   if (verification.isVerified) {
