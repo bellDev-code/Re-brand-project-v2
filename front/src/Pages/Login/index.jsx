@@ -2,7 +2,7 @@ import React, { useCallback, useContext } from 'react';
 import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import { Container, AccountForm, LoginForm, ButtonWrapper, LoginBtn } from './styles';
+import { Container, AccountForm, LoginForm, ButtonWrapper, LoginBtn, LinkWrapper } from './styles';
 import LabelInput from '@Components/LabelInput';
 import { AuthContext } from '@Hooks/Contexts/AuthContext';
 
@@ -59,11 +59,10 @@ const Login = () => {
           <ButtonWrapper>
             <LoginBtn type="submit">login</LoginBtn>
           </ButtonWrapper>
-          <Link to="/register" style={{ paddingTop: '20px' }}>
-            Create Your Account?
-          </Link>
-          <Link to="/find/username">Find Your Username?</Link>
-          <Link to="/find/password">Find Your Password?</Link>
+          <LinkWrapper>
+            <Link to="/register">Create Your Account?</Link> | <Link to="/find/username">Find Your Username?</Link> |
+            <Link to="/find/password">Find Your Password?</Link>
+          </LinkWrapper>
         </LoginForm>
       </AccountForm>
     </Container>

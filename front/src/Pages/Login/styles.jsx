@@ -31,6 +31,27 @@ export const ButtonWrapper = styled.div`
   justify-content: center;
 `;
 
+export const LinkWrapper = styled.div`
+  display: flex;
+  padding-top: 20px;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+
+  a:link {
+    text-decoration: none;
+    padding: 5px;
+  }
+
+  a:visited {
+    color: #000;
+  }
+
+  a:hover {
+    color: #ddd;
+  }
+`;
+
 export const LoginBtn = styled.button`
   cursor: pointer;
   background-color: #000;
