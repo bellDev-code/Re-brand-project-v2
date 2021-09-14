@@ -14,6 +14,7 @@ const Register = () => {
   const password = useInput('');
   const passwordConfirm = useInput('');
   const name = useInput('');
+  const phoneNumber = useInput('');
 
   const onSubmit = useCallback(
     async (event) => {
@@ -70,6 +71,7 @@ const Register = () => {
           password: password.value,
           email: email.value,
           name: name.value,
+          phoneNumber: phoneNumber.value,
         });
         console.log(data);
 
@@ -81,7 +83,7 @@ const Register = () => {
         console.log(error.response);
       }
     },
-    [username.value, password.value, email.value, name.value, passwordConfirm.value],
+    [username.value, password.value, email.value, name.value, passwordConfirm.value, phoneNumber.value],
   );
 
   const checkUsername = useCallback(async () => {
@@ -132,6 +134,11 @@ const Register = () => {
             <label>email</label>
             <input type="email" value={email.value} onChange={email.onChange} onBlur={checkEmail} />
             <label>{email.error}</label>
+          </InputWrapper>
+          <InputWrapper>
+            <label>phoneNumber</label>
+            <input type="tel" value={phoneNumber.value} onChange={phoneNumber.onChange} />
+            <label>{phoneNumber.error}</label>
           </InputWrapper>
           <InputWrapper>
             <label>Password</label>

@@ -47,10 +47,17 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO public.User (username, password, name, "createdAt", email )
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO public.User (username, password, name, "createdAt", email, "phoneNumber" )
+        VALUES ($1, $2, $3, $4, $5, $6)
       `,
-      [req.body.username, hashed, req.body.name, now, req.body.email]
+      [
+        req.body.username,
+        hashed,
+        req.body.name,
+        now,
+        req.body.email,
+        req.body.phoneNumber,
+      ]
     );
 
     client.release();
@@ -93,7 +100,7 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await client.query(
       `
-        SELECT id, name, email, "createdAt" FROM public.User WHERE id = $1
+        SELECT id, name, email, "createdAt", "phoneNumber" FROM public.User WHERE id = $1
       `,
       [parseInt(id)]
     );
@@ -134,7 +141,7 @@ router.post("/login", async (req, res, next) => {
 
         const { rows } = await client.query(
           `
-        SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1 
+        SELECT id, email, name, "createdAt", "phoneNumber" FROM public.user WHERE id = $1 
       `,
           [user.id]
         );

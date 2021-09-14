@@ -7,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
     const client = await db.connect();
     const { rows } = await client.query(
       `
-        SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1 
+        SELECT id, email, name, "createdAt", "phoneNumber" FROM public.user WHERE id = $1 
       `,
       [req.session.userId]
     );
