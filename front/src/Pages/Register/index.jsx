@@ -137,7 +137,7 @@ const Register = () => {
           </InputWrapper>
           <InputWrapper>
             <label>phoneNumber</label>
-            <input type="tel" value={phoneNumber.value} onChange={phoneNumber.onChange} />
+            <input type="tel" value={phoneNumber.value} onChange={phoneNumber.onChange} placeholder="Ex) 01012341234" />
             <label>{phoneNumber.error}</label>
           </InputWrapper>
           <InputWrapper>
