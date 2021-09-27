@@ -36,7 +36,7 @@ router.post("/", async (req, res, next) => {
 
     const isExist = await client.query(
       `
-        SELECT * FROM public.User WHERE username = $1 OR email = $2
+        SELECT * FROM public."User" WHERE username = $1 OR email = $2
       `,
       [req.body.username, req.body.email]
     );
@@ -47,7 +47,7 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO public.User (username, password, name, "createdAt", email, "phoneNumber" )
+        INSERT INTO public."User" (username, password, name, "createdAt", email, "phoneNumber" )
         VALUES ($1, $2, $3, $4, $5, $6)
       `,
       [
@@ -100,7 +100,7 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await client.query(
       `
-        SELECT id, name, email, "createdAt", "phoneNumber" FROM public.User WHERE id = $1
+        SELECT id, name, email, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1
       `,
       [parseInt(id)]
     );
@@ -141,7 +141,7 @@ router.post("/login", async (req, res, next) => {
 
         const { rows } = await client.query(
           `
-        SELECT id, email, name, "createdAt", "phoneNumber" FROM public.user WHERE id = $1 
+        SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1 
       `,
           [user.id]
         );
@@ -184,7 +184,7 @@ router.post("/check", async (req, res, next) => {
     if (type === "username") {
       const { rows } = await client.query(
         `
-          SELECT * FROM public.User WHERE username = $1
+          SELECT * FROM public."User" WHERE username = $1
         `,
         [req.body.payload]
       );
@@ -195,7 +195,7 @@ router.post("/check", async (req, res, next) => {
     } else if (type === "email") {
       const { rows } = await client.query(
         `
-          SELECT * FROM public.User WHERE email = $1
+          SELECT * FROM public."User" WHERE email = $1
         `,
         [req.body.payload]
       );
@@ -260,7 +260,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     const { rows } = await client.query(
       `
-        SELECT * FROM public.verification WHERE payload = $1 AND code = $2
+        SELECT * FROM public."Verification" WHERE payload = $1 AND code = $2
       `,
       [payload, code]
     );
@@ -275,7 +275,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     const userQuery = await client.query(
       ` 
-        SELECT username, email, password FROM public.User WHERE email = $1
+        SELECT username, email, password FROM public."User" WHERE email = $1
       `,
       [verification.payload]
     );
@@ -321,7 +321,7 @@ router.post("/find/change", async (req, res, next) => {
       case "email":
         await await client.query(
           `
-          UPDATE public.User SET password=$1 WHERE email=$2
+          UPDATE public."User" SET password=$1 WHERE email=$2
         `,
           [hashed, payload]
         );
@@ -329,7 +329,7 @@ router.post("/find/change", async (req, res, next) => {
       case "phone":
         await client.query(
           `
-            UPDATE public.User SET password=$1 WHERE "phoneNumber"=$2
+            UPDATE public."User" SET password=$1 WHERE "phoneNumber"=$2
           `,
           [hashed, payload]
         );

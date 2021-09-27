@@ -14,7 +14,7 @@ module.exports = (app) => {
       const connect = await db.connect();
       const { rows } = await connect.query(
         `
-        SELECT id, email, name, "createdAt" FROM public.user WHERE id = $1
+        SELECT id, email, name, "createdAt" FROM public."User" WHERE id = $1
       `,
         [userId]
       );
@@ -41,7 +41,7 @@ module.exports = (app) => {
 
           const { rows } = await connect.query(
             `
-            SELECT * FROM public.user WHERE username = $1
+            SELECT * FROM public."User" WHERE username = $1
           `,
             [username]
           );

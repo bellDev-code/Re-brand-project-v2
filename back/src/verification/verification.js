@@ -15,7 +15,7 @@ const findUserByVerification = async (client, { type, payload }) => {
     case "email":
       const emailQuery = await client.query(
         `
-          SELECT username, email FROM public.User WHERE email = $1
+          SELECT username, email FROM public."User" WHERE email = $1
         `,
         [payload]
       );
@@ -26,7 +26,7 @@ const findUserByVerification = async (client, { type, payload }) => {
     case "phone":
       const phoneQuery = await client.query(
         `
-        SELECT username, "phoneNumber" FROM public.User WHERE "phoneNumber" = $1
+        SELECT username, "phoneNumber" FROM public."User" WHERE "phoneNumber" = $1
       `,
         [payload]
       );
@@ -50,7 +50,7 @@ const findUserByVerification = async (client, { type, payload }) => {
 const createVerification = async (client, { type, payload }) => {
   await client.query(
     `
-      DELETE FROM public.verification WHERE payload = $1 AND type = $2
+      DELETE FROM public."Verification" WHERE payload = $1 AND type = $2
     `,
     [payload, type.toUpperCase()]
   );
@@ -63,7 +63,7 @@ const createVerification = async (client, { type, payload }) => {
 
   await client.query(
     `
-      INSERT INTO public.verification (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
+      INSERT INTO public."Verification" (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
     `,
     [type.toUpperCase(), payload, code, false, expiredAt]
   );
@@ -84,7 +84,7 @@ const createVerification = async (client, { type, payload }) => {
 const findVerification = async (client, { type, payload, code }) => {
   const { rows } = await client.query(
     `
-      SELECT * FROM public.Verification WHERE type = $1 AND payload = $2 AND code = $3 AND "isVerified" = false
+      SELECT * FROM public."Verification" WHERE type = $1 AND payload = $2 AND code = $3 AND "isVerified" = false
     `,
     [type.toUpperCase(), payload, code]
   );
@@ -102,7 +102,7 @@ const expireVerification = async (client, verification) => {
   console.log(verification);
   await client.query(
     `
-      UPDATE public.Verification SET "isVerified" = $2 WHERE id = $1
+      UPDATE public."Verification" SET "isVerified" = $2 WHERE id = $1
     `,
     [verification.id, true]
   );

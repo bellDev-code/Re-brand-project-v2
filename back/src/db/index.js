@@ -25,6 +25,9 @@ const initialize = async () => {
       IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='gender') THEN
       CREATE TYPE gender AS ENUM('MALE', 'FEMALE', 'INTERSEX');
       END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='type') THEN
+      CREATE TYPE type AS ENUM('PHONE', 'EMAIL');
+      END IF;
       END 
       $$
       
@@ -51,7 +54,7 @@ const initialize = async () => {
     `
     CREATE TABLE IF NOT EXISTS public."Verification"(
       id            SERIAL      PRIMARY KEY,
-      type          TEXT        NOT NULL,
+      "verifyType"  type        NOT NULL,
       payload       TEXT        NOT NULL,
       code          TEXT        NOT NULL,
       "isVerified"  BOOLEAN     NOT NULL, 
@@ -110,7 +113,7 @@ const initialize = async () => {
       "updatedAt"   TIMESTAMP      NOT NULL,
       CONSTRAINT fk_category
         FOREIGN KEY("categoryId")
-          REFERENCES public.Category(id),
+          REFERENCES public."Category"(id),
       CONSTRAINT fk_info
         FOREIGN KEY("infoId")
           REFERENCES public."ProductInfo"(id),
