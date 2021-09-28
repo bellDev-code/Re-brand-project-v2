@@ -8,7 +8,7 @@ export const AuthContext = createContext(undefined);
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState();
 
-  console.log(user);
+  // console.log(user);
 
   const getMyProfile = useCallback(async () => {
     try {

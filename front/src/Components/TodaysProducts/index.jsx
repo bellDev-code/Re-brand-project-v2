@@ -6,7 +6,7 @@ const TodaysProducts = () => {
     <Container>
       <BestBox>
         <TextWrapper>
-          <h2>TODAY DEALS</h2>
+          <h2>CATEGORY</h2>
         </TextWrapper>
         <ProductBox></ProductBox>
       </BestBox>
