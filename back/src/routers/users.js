@@ -1,12 +1,8 @@
 const router = require("express").Router();
 const db = require("../db");
-const dayjs = require("dayjs");
 const { emailRegex } = require("../utils/regex.js");
-const bcrypt = require("bcrypt");
-
 const passport = require("passport");
 const { IsLoggedIn } = require("../middlewares/auth");
-const { sendEmail } = require("../utils/email");
 
 const {
   findUserByVerification,
@@ -18,47 +14,26 @@ const {
   validVerification,
 } = require("../verification/verification.js");
 
+const { bcryptHashedJoin, changeHashed } = require("../useBcrypt/bcryptHashed");
+const { isExistUser, getUser } = require("../user/user");
+
 // JOIN USER
 router.post("/", async (req, res, next) => {
-  const now = dayjs().format();
-
   try {
     // email check
     if (!emailRegex.test(req.body.email)) {
       throw new Error("email 형식이 올바르지 않습니다. 확인해주세요.");
     }
 
-    // use bcrypt
-    const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
-    const hashed = await bcrypt.hash(req.body.password, salt);
-
     const client = await db.connect();
 
-    const isExist = await client.query(
-      `
-        SELECT * FROM public."User" WHERE username = $1 OR email = $2
-      `,
-      [req.body.username, req.body.email]
-    );
+    const isExist = await isExistUser(client, req);
 
     if (isExist.rows.length) {
       throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
     }
 
-    await client.query(
-      `
-        INSERT INTO public."User" (username, password, name, "createdAt", email, "phoneNumber" )
-        VALUES ($1, $2, $3, $4, $5, $6)
-      `,
-      [
-        req.body.username,
-        hashed,
-        req.body.name,
-        now,
-        req.body.email,
-        req.body.phoneNumber,
-      ]
-    );
+    await bcryptHashedJoin(client, req);
 
     client.release();
 
@@ -98,21 +73,16 @@ router.get("/:id", async (req, res, next) => {
 
     const { id } = req.params;
 
-    const result = await client.query(
-      `
-        SELECT id, name, email, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1
-      `,
-      [parseInt(id)]
-    );
+    const result = await getUser(client, id);
 
-    console.log(result);
+    console.log(result[0]);
 
     client.release();
 
-    if (result.rows.length < 1) {
+    if (result < 1) {
       return res.status(404).send("존재하지 않는 유저입니다.");
     }
-    return res.json(result.rows[0]);
+    return res.json(result[0]);
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);
@@ -314,29 +284,11 @@ router.post("/find/change", async (req, res, next) => {
 
     await expireVerification(client, verification);
 
-    const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
-    const hashed = await bcrypt.hash(changePassword, salt);
-
-    switch (type) {
-      case "email":
-        await await client.query(
-          `
-          UPDATE public."User" SET password=$1 WHERE email=$2
-        `,
-          [hashed, payload]
-        );
-        break;
-      case "phone":
-        await client.query(
-          `
-            UPDATE public."User" SET password=$1 WHERE "phoneNumber"=$2
-          `,
-          [hashed, payload]
-        );
-        break;
-      default:
-        throw new Error("올바르지 않은 verification type입니다.");
-    }
+    await changeHashed(client, {
+      type: type,
+      payload: payload,
+      changePassword: changePassword,
+    });
 
     client.release();
 

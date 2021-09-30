@@ -50,7 +50,7 @@ const findUserByVerification = async (client, { type, payload }) => {
 const createVerification = async (client, { type, payload }) => {
   await client.query(
     `
-      DELETE FROM public."Verification" WHERE payload = $1 AND type = $2
+      DELETE FROM public."Verification" WHERE payload = $1 AND "verifyType" = $2
     `,
     [payload, type.toUpperCase()]
   );
@@ -63,7 +63,7 @@ const createVerification = async (client, { type, payload }) => {
 
   await client.query(
     `
-      INSERT INTO public."Verification" (type, payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
+      INSERT INTO public."Verification" ("verifyType", payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
     `,
     [type.toUpperCase(), payload, code, false, expiredAt]
   );
@@ -84,7 +84,7 @@ const createVerification = async (client, { type, payload }) => {
 const findVerification = async (client, { type, payload, code }) => {
   const { rows } = await client.query(
     `
-      SELECT * FROM public."Verification" WHERE type = $1 AND payload = $2 AND code = $3 AND "isVerified" = false
+      SELECT * FROM public."Verification" WHERE "verifyType" = $1 AND payload = $2 AND code = $3 AND "isVerified" = false
     `,
     [type.toUpperCase(), payload, code]
   );
