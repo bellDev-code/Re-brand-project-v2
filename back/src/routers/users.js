@@ -15,7 +15,7 @@ const {
 } = require("../verification/verification.js");
 
 const { bcryptHashedJoin, changeHashed } = require("../useBcrypt/bcryptHashed");
-const { isExistUser, getUser } = require("../user/user");
+const { isExistUser, getUser, LoginUser } = require("../user/user");
 
 // JOIN USER
 router.post("/", async (req, res, next) => {
@@ -109,21 +109,14 @@ router.post("/login", async (req, res, next) => {
 
         const client = await db.connect();
 
-        const { rows } = await client.query(
-          `
-        SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1 
-      `,
-          [user.id]
-        );
-
-        console.log(rows);
+        const rows = LoginUser(client, user);
 
         client.release();
 
         return res.status(200).json({
           success: true,
           error: null,
-          data: rows[0],
+          data: rows,
         });
       });
     })(req, res, next);

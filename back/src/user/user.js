@@ -16,5 +16,15 @@ const getUser = async (client, { id }) => {
   );
 };
 
+const LoginUser = async (client, user) => {
+  await client.query(
+    `
+  SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1 
+`,
+    [user.id]
+  );
+};
+
 exports.isExistUser = isExistUser;
 exports.getUser = getUser;
+exports.LoginUser = LoginUser;
