@@ -15,7 +15,13 @@ const {
 } = require("../verification/verification.js");
 
 const { bcryptHashedJoin, changeHashed } = require("../useBcrypt/bcryptHashed");
-const { isExistUser, getUser, LoginUser } = require("../user/user");
+const {
+  isExistUser,
+  getUser,
+  LoginUser,
+  checkUsername,
+  checkUserEmail,
+} = require("../user/user");
 
 // JOIN USER
 router.post("/", async (req, res, next) => {
@@ -29,7 +35,7 @@ router.post("/", async (req, res, next) => {
 
     const isExist = await isExistUser(client, req);
 
-    if (isExist.rows.length) {
+    if (isExist) {
       throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
     }
 
@@ -75,14 +81,14 @@ router.get("/:id", async (req, res, next) => {
 
     const result = await getUser(client, id);
 
-    console.log(result[0]);
+    console.log(result);
 
     client.release();
 
-    if (result < 1) {
+    if (!result) {
       return res.status(404).send("존재하지 않는 유저입니다.");
     }
-    return res.json(result[0]);
+    return res.json(result);
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);
@@ -145,25 +151,15 @@ router.post("/check", async (req, res, next) => {
     const client = await db.connect();
 
     if (type === "username") {
-      const { rows } = await client.query(
-        `
-          SELECT * FROM public."User" WHERE username = $1
-        `,
-        [req.body.payload]
-      );
+      const rows = checkUsername(client, req);
 
-      if (rows[0]) {
+      if (rows) {
         throw new Error("이미 사용하고 있는 아이디입니다.");
       }
     } else if (type === "email") {
-      const { rows } = await client.query(
-        `
-          SELECT * FROM public."User" WHERE email = $1
-        `,
-        [req.body.payload]
-      );
+      const rows = checkUserEmail(client, req);
 
-      if (rows[0]) {
+      if (rows) {
         throw new Error("이미 사용하고 있는 이메일입니다.");
       }
     }

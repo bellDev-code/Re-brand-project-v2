@@ -25,6 +25,26 @@ const LoginUser = async (client, user) => {
   );
 };
 
+const checkUsername = async (client, req) => {
+  await client.query(
+    `
+      SELECT * FROM public."User" WHERE username = $1
+    `,
+    [req.body.payload]
+  );
+};
+
+const checkUserEmail = async (client, req) => {
+  await client.query(
+    `
+      SELECT * FROM public."User" WHERE email = $1
+    `,
+    [req.body.payload]
+  );
+};
+
 exports.isExistUser = isExistUser;
 exports.getUser = getUser;
 exports.LoginUser = LoginUser;
+exports.checkUsername = checkUsername;
+exports.checkUserEmail = checkUserEmail;
