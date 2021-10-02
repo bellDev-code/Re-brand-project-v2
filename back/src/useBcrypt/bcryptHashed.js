@@ -21,6 +21,7 @@ const bcryptHashedJoin = async (client, req) => {
       req.body.phoneNumber,
     ]
   );
+  return bcryptHashedJoin;
 };
 
 const changeHashed = async (client, { changePassword, type, payload }) => {
@@ -47,6 +48,7 @@ const changeHashed = async (client, { changePassword, type, payload }) => {
     default:
       throw new Error("올바르지 않은 verification type입니다.");
   }
+  return changeHashed;
 };
 
 exports.bcryptHashedJoin = bcryptHashedJoin;
