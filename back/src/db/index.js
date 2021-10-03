@@ -1,6 +1,13 @@
 // pg client 생성
 require("dotenv").config();
 const { Pool } = require("pg");
+const {
+  createTable,
+  addColumns,
+  setRelation,
+  setRelations,
+} = require("./scripts");
+const coreColumns = require("./sql");
 
 // client에 빌려주는 역할
 const pool = new Pool({
@@ -25,8 +32,8 @@ const initialize = async () => {
       IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='gender') THEN
       CREATE TYPE gender AS ENUM('MALE', 'FEMALE', 'INTERSEX');
       END IF;
-      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='type') THEN
-      CREATE TYPE type AS ENUM('PHONE', 'EMAIL');
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='verifytype') THEN
+      CREATE TYPE verifytype AS ENUM('PHONE', 'EMAIL');
       END IF;
       END 
       $$
@@ -35,94 +42,144 @@ const initialize = async () => {
   );
 
   // Create user table
-  await client.query(
-    `
-      CREATE TABLE IF NOT EXISTS public."User"(
-        id            SERIAL     PRIMARY KEY,
-        username      TEXT       NOT NULL    UNIQUE,
-        password      TEXT       NOT NULL,
-        name          TEXT       NOT NULL,
-        "createdAt"   TIMESTAMP  NOT NULL,
-        email         TEXT       NOT NULL    UNIQUE,
-        "phoneNumber" TEXT       UNIQUE
-      )
-    `
-  );
+  await createTable(client, "User");
+  await addColumns(client, "User", [
+    {
+      name: "username",
+      type: "TEXT",
+      unique: true,
+    },
+    {
+      name: "password",
+      type: "TEXT",
+    },
+    {
+      name: "name",
+      type: "TEXT",
+    },
+    {
+      name: "email",
+      type: "TEXT",
+      unique: true,
+    },
+    {
+      name: "phoneNumber",
+      type: "TEXT",
+      nullable: true,
+    },
+  ]);
 
   // Create verification table
-  await client.query(
-    `
-    CREATE TABLE IF NOT EXISTS public."Verification"(
-      id            SERIAL      PRIMARY KEY,
-      "verifyType"  type        NOT NULL,
-      payload       TEXT        NOT NULL,
-      code          TEXT        NOT NULL,
-      "isVerified"  BOOLEAN     NOT NULL, 
-      "expiredAt"   TIMESTAMP   NOT NULL
-    )
-    `
-  );
+
+  await createTable(client, "Verification");
+  await addColumns(client, "Verification", [
+    {
+      name: "payload",
+      type: "TEXT",
+    },
+    {
+      name: "verifyType",
+      type: "verifytype",
+    },
+    {
+      name: "isVerified",
+      type: "BOOLEAN",
+    },
+    {
+      name: "expiredAt",
+      type: "TIMESTAMP",
+    },
+  ]);
 
   // Create Category table
-  await client.query(
-    `
-    CREATE TABLE IF NOT EXISTS public."Category"(
-      id            SERIAL         PRIMARY KEY,
-      name          TEXT           NOT NULL
-    )
-    `
-  );
+  await createTable(client, "Category", true);
+
+  await addColumns(client, "Category", {
+    name: "name",
+    type: "TEXT",
+  });
+
+  // Create Brand table
+  await createTable(client, "Brand");
+
+  await addColumns(client, "Brand", {
+    name: "name",
+    type: "TEXT",
+  });
 
   // Create Product Info
-  await client.query(
-    `
-    CREATE TABLE IF NOT EXISTS public."ProductInfo"(
-      id            SERIAL         PRIMARY KEY,
-      color         TEXT           NOT NULL,
-      "offerGender" gender         NOT NULL,
-      "createdAt"   TIMESTAMP      NOT NULL,
-      "updatedAt"   TIMESTAMP      NOT NULL
-    )
-    `
-  );
+  await createTable(client, "ProductInfo");
+  await addColumns(client, "ProductInfo", [
+    { name: "color", type: "TEXT" },
+    {
+      name: "offerGender",
+      type: "gender",
+    },
+  ]);
 
   // Create Product Detail
-  await client.query(
-    `
-    CREATE TABLE IF NOT EXISTS public."ProductDetail"(
-      id            SERIAL         PRIMARY KEY,
-      "createdAt"   TIMESTAMP      NOT NULL,
-      "updatedAt"   TIMESTAMP      NOT NULL
-    )
-    `
-  );
+  await createTable(client, "ProductDetail");
 
   // Create Product table
-  await client.query(
-    `
-    CREATE TABLE IF NOT EXISTS public."Product"(
-      id            SERIAL         PRIMARY KEY,
-      name          TEXT           NOT NULL,
-      price         INTEGER        NOT NULL,
-      count         INTEGER        NOT NULL,
-      sale          FLOAT,         
-      "categoryId"  SERIAL,
-      "infoId"      SERIAL         NOT NULL,
-      "detailId"    SERIAL,
-      "createdAt"   TIMESTAMP      NOT NULL,
-      "updatedAt"   TIMESTAMP      NOT NULL,
-      CONSTRAINT fk_category
-        FOREIGN KEY("categoryId")
-          REFERENCES public."Category"(id),
-      CONSTRAINT fk_info
-        FOREIGN KEY("infoId")
-          REFERENCES public."ProductInfo"(id),
-      CONSTRAINT fk_detail
-        FOREIGN KEY("detailId")
-          REFERENCES public."ProductDetail"(id)
-    )
-    `
-  );
+  // await client.query(
+  //   `
+  //   CREATE TABLE IF NOT EXISTS public."Product"(
+  //     id            SERIAL         PRIMARY KEY,
+  //     name          TEXT           NOT NULL,
+  //     price         INTEGER        NOT NULL,
+  //     count         INTEGER        NOT NULL,
+  //     sale          FLOAT,
+  //     "categoryId"  SERIAL,
+  //     "infoId"      SERIAL         NOT NULL,
+  //     "detailId"    SERIAL,
+  //     "createdAt"   TIMESTAMP      NOT NULL,
+  //     "updatedAt"   TIMESTAMP      NOT NULL,
+  //     CONSTRAINT fk_category
+  //       FOREIGN KEY("categoryId")
+  //         REFERENCES public."Category"(id),
+  //     CONSTRAINT fk_info
+  //       FOREIGN KEY("infoId")
+  //         REFERENCES public."ProductInfo"(id),
+  //     CONSTRAINT fk_detail
+  //       FOREIGN KEY("detailId")
+  //         REFERENCES public."ProductDetail"(id)
+  //   )
+  //   `
+  // );
+
+  await createTable(client, "Product");
+  await addColumns(client, "Product", [
+    {
+      name: "name",
+      type: "TEXT",
+    },
+    {
+      name: "price",
+      type: "INTEGER",
+    },
+    {
+      name: "count",
+      type: "INTEGER",
+    },
+    {
+      name: "sale",
+      type: "FLOAT",
+    },
+  ]);
+  await setRelations(client, "Product", [
+    {
+      referenceTableName: "Category",
+      name: "categoryId",
+    },
+    {
+      referenceTableName: "ProductInfo",
+      name: "InfoId",
+    },
+    {
+      referenceTableName: "ProductDetail",
+      name: "detailId",
+    },
+  ]);
 
   await client.release();
 };
