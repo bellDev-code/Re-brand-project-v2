@@ -160,14 +160,14 @@ router.post("/check", async (req, res, next) => {
     const client = await db.connect();
 
     if (type === "username") {
-      const { rows } = await query(
+      await query(
         client,
         sql.user.checkByUsername,
         [req.body.payload],
         (rows) => !rows
       );
     } else if (type === "email") {
-      const { rows } = await query(
+      await query(
         client,
         sql.user.checkByEmail,
         [req.body.payload],

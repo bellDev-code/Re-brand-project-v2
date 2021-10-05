@@ -2,8 +2,8 @@ const sql = {
   user: {
     findByEmail: (fields) =>
       `SELECT ${String(fields)} FROM public."User" WHERE email = $1`,
-    checkByUsername: `SELECT * FROM public."User" WHERE username = $1`,
-    checkByEmail: `SELECT * FROM public."User" WHERE email = $1`,
+    checkByUsername: 'SELECT * FROM public."User" WHERE username = $1',
+    checkByEmail: 'SELECT * FROM public."User" WHERE email = $1',
     loginUser:
       'SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1',
     isExists: 'SELECT * FROM public."User" WHERE username = $1 OR email = $2',
