@@ -3,7 +3,7 @@ const query = async (client, queryText, values, callback) => {
 
   const isError = callback(rows);
   if (isError) {
-    throw new Error();
+    throw new Error("");
   }
   return rows;
 };

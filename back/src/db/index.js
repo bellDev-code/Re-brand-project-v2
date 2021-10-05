@@ -121,32 +121,6 @@ const initialize = async () => {
   await createTable(client, "ProductDetail");
 
   // Create Product table
-  // await client.query(
-  //   `
-  //   CREATE TABLE IF NOT EXISTS public."Product"(
-  //     id            SERIAL         PRIMARY KEY,
-  //     name          TEXT           NOT NULL,
-  //     price         INTEGER        NOT NULL,
-  //     count         INTEGER        NOT NULL,
-  //     sale          FLOAT,
-  //     "categoryId"  SERIAL,
-  //     "infoId"      SERIAL         NOT NULL,
-  //     "detailId"    SERIAL,
-  //     "createdAt"   TIMESTAMP      NOT NULL,
-  //     "updatedAt"   TIMESTAMP      NOT NULL,
-  //     CONSTRAINT fk_category
-  //       FOREIGN KEY("categoryId")
-  //         REFERENCES public."Category"(id),
-  //     CONSTRAINT fk_info
-  //       FOREIGN KEY("infoId")
-  //         REFERENCES public."ProductInfo"(id),
-  //     CONSTRAINT fk_detail
-  //       FOREIGN KEY("detailId")
-  //         REFERENCES public."ProductDetail"(id)
-  //   )
-  //   `
-  // );
-
   await createTable(client, "Product");
   await addColumns(client, "Product", [
     {

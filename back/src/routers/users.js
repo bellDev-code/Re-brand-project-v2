@@ -14,8 +14,7 @@ const {
   validVerification,
 } = require("../verification/verification.js");
 
-const { bcryptHashedJoin, changeHashed } = require("../useBcrypt/bcryptHashed");
-const { isExistUser, getUser } = require("../user/user");
+const { bcryptHashedJoin, changeHashed } = require("../hashed/bcryptHashed");
 const { query } = require("../common/query");
 const sql = require("../db/sql");
 
@@ -29,7 +28,10 @@ router.post("/", async (req, res, next) => {
 
     const client = await db.connect();
 
-    const isExist = await isExistUser(client, req);
+    const isExist = await query(client, sql.user.isExists, [
+      req.body.username,
+      req.body.email,
+    ]);
 
     if (isExist) {
       throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
@@ -75,7 +77,7 @@ router.get("/:id", async (req, res, next) => {
 
     const { id } = req.params;
 
-    const result = await getUser(client, id);
+    const result = await query(client, sql.user.getUser, [parseInt(id)]);
 
     console.log(result);
 
@@ -147,9 +149,9 @@ router.delete("/", async (req, res, next) => {
 // Check Register Data
 router.post("/check", async (req, res, next) => {
   try {
-    const query = req.query;
+    const result = req.query;
 
-    const type = query.type;
+    const type = result.type;
 
     if (type !== "username" && type !== "email") {
       throw new Error(`${type} is not check type`);
@@ -158,14 +160,14 @@ router.post("/check", async (req, res, next) => {
     const client = await db.connect();
 
     if (type === "username") {
-      const rows = await query(
+      const { rows } = await query(
         client,
         sql.user.checkByUsername,
         [req.body.payload],
         (rows) => !rows
       );
     } else if (type === "email") {
-      const rows = await query(
+      const { rows } = await query(
         client,
         sql.user.checkByEmail,
         [req.body.payload],
