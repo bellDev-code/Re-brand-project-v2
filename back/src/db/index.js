@@ -1,13 +1,7 @@
 // pg client 생성
 require("dotenv").config();
 const { Pool } = require("pg");
-const {
-  createTable,
-  addColumns,
-  setRelation,
-  setRelations,
-} = require("./scripts");
-const coreColumns = require("./sql");
+const { createTable, addColumns, setRelations } = require("./scripts");
 
 // client에 빌려주는 역할
 const pool = new Pool({
@@ -34,6 +28,9 @@ const initialize = async () => {
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='verifytype') THEN
       CREATE TYPE verifytype AS ENUM('PHONE', 'EMAIL');
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname='size') THEN
+      CREATE TYPE size AS ENUM('S', 'M', 'L', 'XL');
       END IF;
       END 
       $$
@@ -91,17 +88,50 @@ const initialize = async () => {
     },
   ]);
 
-  // Create Category table
-  await createTable(client, "Category", true);
-
-  await addColumns(client, "Category", {
+  // Create GenderKinds table
+  await createTable(client, "GenderKinds", true);
+  await addColumns(client, "GenderKinds", {
     name: "name",
     type: "TEXT",
   });
 
+  // Create BackKinds table
+  await createTable(client, "BackKinds", true);
+  await addColumns(client, "BackKinds", {
+    name: "name",
+    type: "TEXT",
+  });
+
+  // Create WatchKinds table
+  await createTable(client, "WatchKinds", true);
+  await addColumns(client, "WatchKinds", {
+    name: "name",
+    type: "TEXT",
+  });
+
+  // Create Category table
+  await createTable(client, "Category", true);
+  await addColumns(client, "Category", {
+    name: "name",
+    type: "TEXT",
+  });
+  await setRelations(client, "Category", [
+    {
+      referenceTableName: "BackKinds",
+      name: "backKindId",
+    },
+    {
+      referenceTableName: "WatchKinds",
+      name: "WatchKindId",
+    },
+    {
+      referenceTableName: "GenderKinds",
+      name: "GenderKindId",
+    },
+  ]);
+
   // Create Brand table
   await createTable(client, "Brand");
-
   await addColumns(client, "Brand", {
     name: "name",
     type: "TEXT",
@@ -115,10 +145,28 @@ const initialize = async () => {
       name: "offerGender",
       type: "gender",
     },
+    {
+      name: "size",
+      type: "size",
+    },
+    {
+      name: "manufacturer",
+      type: "TEXT",
+    },
+    {
+      name: "origin",
+      type: "TEXT",
+    },
   ]);
 
   // Create Product Detail
   await createTable(client, "ProductDetail");
+  await addColumns(client, "ProductDetail", [
+    {
+      name: "material",
+      type: "TEXT",
+    },
+  ]);
 
   // Create Product table
   await createTable(client, "Product");
