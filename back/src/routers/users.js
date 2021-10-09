@@ -264,7 +264,7 @@ router.post("/find/verify", async (req, res, next) => {
 
     return res.json({
       success: true,
-      username: userQuery.rows[0].username,
+      username: userQuery[0].username,
     });
   } catch (error) {
     return res.status(400).send({ success: false, error: error.message });
