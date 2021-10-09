@@ -16,7 +16,6 @@ const {
   validVerification,
 } = require("../verification/verification.js");
 
-const { bcryptHashedJoin, changeHashed } = require("../hashed/bcryptHashed");
 const { query } = require("../common/query");
 const sql = require("../db/sql");
 
@@ -50,16 +49,16 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-      INSERT INTO public."User" (username, password, name, "createdAt", email, "phoneNumber" )
-      VALUES ($1, $2, $3, $4, $5, $6)
+      INSERT INTO public."User" (username, password, name, email, "phoneNumber", "createdAt", "updatedAt" )
+      VALUES ($1, $2, $3, $4, $5, $6, $6)
     `,
       [
         req.body.username,
         hashed,
         req.body.name,
-        now,
         req.body.email,
         req.body.phoneNumber,
+        now,
       ]
     );
 

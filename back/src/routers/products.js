@@ -1,21 +1,54 @@
-// router 생성 방법
 const express = require("express");
 const router = express.Router();
+const db = require("../db");
+const dayjs = require("dayjs");
+const util = require("util");
 
-// express 선언하고 바로 router 만드는 방법
-// const express = require("express").Router();
+router.post("/", async (req, res, next) => {
+  try {
+    const { name, price, count, sale, categoryId } = req.body;
 
-// 두 번 나눈것
-router.get("/", (req, res, next) => {
-  res.send("ok");
+    const now = dayjs().format();
+
+    const client = await db.connect();
+
+    await client.query(
+      `
+        INSERT INTO public."ProductInfo" () VALUES () 
+      `
+    );
+
+    await client.query(
+      `
+      INSERT INTO public."Product" (name, price, count, sale, "categoryId", "infoId", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6 $7, $7);
+    `,
+      [name, price, count, sale, categoryId, now]
+    );
+
+    client.release();
+
+    return res.status(200).json({
+      success: true,
+      error: null,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
-router.get("/seller", (req, res, next) => {
-  res.send("ok");
+router.post("/info", async (req, res, next) => {
+  try {
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
 
-// exports = router;
-// 예제 : const { router } = require("express")
-
-// default
 module.exports = router;
