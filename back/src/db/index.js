@@ -88,47 +88,12 @@ const initialize = async () => {
     },
   ]);
 
-  // Create GenderKinds table
-  await createTable(client, "GenderKinds", true);
-  await addColumns(client, "GenderKinds", {
-    name: "name",
-    type: "TEXT",
-  });
-
-  // Create BackKinds table
-  await createTable(client, "BackKinds", true);
-  await addColumns(client, "BackKinds", {
-    name: "name",
-    type: "TEXT",
-  });
-
-  // Create WatchKinds table
-  await createTable(client, "WatchKinds", true);
-  await addColumns(client, "WatchKinds", {
-    name: "name",
-    type: "TEXT",
-  });
-
   // Create Category table
   await createTable(client, "Category", true);
   await addColumns(client, "Category", {
     name: "name",
     type: "TEXT",
   });
-  await setRelations(client, "Category", [
-    {
-      referenceTableName: "BackKinds",
-      name: "backKindId",
-    },
-    {
-      referenceTableName: "WatchKinds",
-      name: "WatchKindId",
-    },
-    {
-      referenceTableName: "GenderKinds",
-      name: "GenderKindId",
-    },
-  ]);
 
   // Create Brand table
   await createTable(client, "Brand");

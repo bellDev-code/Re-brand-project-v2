@@ -9,7 +9,6 @@ const createTable = async (client, tableName, onlyId) => {
   `
   );
 };
-
 const addColumn = async (
   client,
   tableName,

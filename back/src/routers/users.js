@@ -28,10 +28,14 @@ router.post("/", async (req, res, next) => {
 
     const client = await db.connect();
 
-    const isExist = await query(client, sql.user.isExists, [
-      req.body.username,
-      req.body.email,
-    ]);
+    const isExist = await query(
+      client,
+      sql.user.isExists,
+      [req.body.username, req.body.email],
+      (rows) => {
+        return rows.length === 1;
+      }
+    );
 
     if (isExist) {
       throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
@@ -77,16 +81,28 @@ router.get("/:id", async (req, res, next) => {
 
     const { id } = req.params;
 
-    const result = await query(client, sql.user.getUser, [parseInt(id)]);
+    // const [user] = await query(
+    //   client,
+    //   sql.user.getUser,
+    //   [parseInt(id)],
+    //   (rows) => {
+    //     return rows.length < 1;
+    //   }
+    // );
+    const result = await query(
+      client,
+      sql.user.getUser,
+      [parseInt(id)],
+      (rows) => {
+        return rows.length < 1;
+      }
+    );
 
     console.log(result);
 
     client.release();
 
-    if (!result) {
-      return res.status(404).send("존재하지 않는 유저입니다.");
-    }
-    return res.json(result);
+    return res.json(result[0]);
   } catch (error) {
     console.error(error);
     return res.status(403).send(error.message);
