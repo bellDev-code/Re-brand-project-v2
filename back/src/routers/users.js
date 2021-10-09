@@ -136,6 +136,7 @@ router.post("/login", async (req, res, next) => {
             [user.id],
             (rows) => !rows.length
           );
+          // 커밋 테스트
 
           console.log(rows);
 
