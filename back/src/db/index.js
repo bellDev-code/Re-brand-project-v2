@@ -166,6 +166,10 @@ const initialize = async () => {
       referenceTableName: "ProductDetail",
       name: "detailId",
     },
+    {
+      referenceTableName: "Brand",
+      name: "brandId",
+    },
   ]);
 
   await client.release();

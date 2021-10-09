@@ -3,6 +3,8 @@ const db = require("../db");
 const { emailRegex } = require("../utils/regex.js");
 const passport = require("passport");
 const { IsLoggedIn } = require("../middlewares/auth");
+const bcrypt = require("bcrypt");
+const dayjs = require("dayjs");
 
 const {
   findUserByVerification,
@@ -28,7 +30,7 @@ router.post("/", async (req, res, next) => {
 
     const client = await db.connect();
 
-    const isExist = await query(
+    const [user] = await query(
       client,
       sql.user.isExists,
       [req.body.username, req.body.email],
@@ -37,11 +39,29 @@ router.post("/", async (req, res, next) => {
       }
     );
 
-    if (isExist) {
+    if (user) {
       throw new Error("이미 사용하고 있는 아이디 또는 이메일입니다.");
     }
 
-    await bcryptHashedJoin(client, req);
+    const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
+    const hashed = await bcrypt.hash(req.body.password, salt);
+
+    const now = dayjs().format();
+
+    await client.query(
+      `
+      INSERT INTO public."User" (username, password, name, "createdAt", email, "phoneNumber" )
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `,
+      [
+        req.body.username,
+        hashed,
+        req.body.name,
+        now,
+        req.body.email,
+        req.body.phoneNumber,
+      ]
+    );
 
     client.release();
 
@@ -293,11 +313,29 @@ router.post("/find/change", async (req, res, next) => {
 
     await expireVerification(client, verification);
 
-    await changeHashed(client, {
-      type: type,
-      payload: payload,
-      changePassword: changePassword,
-    });
+    const salt = await bcrypt.genSalt(+process.env.PASSWORD_ROUND_LENGTH);
+    const hashed = await bcrypt.hash(changePassword, salt);
+
+    switch (type) {
+      case "email":
+        await await client.query(
+          `
+          UPDATE public."User" SET password=$1 WHERE email=$2
+        `,
+          [hashed, payload]
+        );
+        break;
+      case "phone":
+        await client.query(
+          `
+            UPDATE public."User" SET password=$1 WHERE "phoneNumber"=$2
+          `,
+          [hashed, payload]
+        );
+        break;
+      default:
+        throw new Error("올바르지 않은 verification type입니다.");
+    }
 
     client.release();
 
