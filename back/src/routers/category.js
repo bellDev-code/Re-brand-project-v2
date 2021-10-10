@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-const dayjs = require("dayjs");
 
 router.post("/", async (req, res, next) => {
   try {

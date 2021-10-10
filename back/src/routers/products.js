@@ -6,7 +6,18 @@ const util = require("util");
 
 router.post("/", async (req, res, next) => {
   try {
-    const { name, price, count, sale, categoryId } = req.body;
+    const {
+      name,
+      price,
+      count,
+      sale,
+      categoryId,
+      color,
+      offerGender,
+      size,
+      manufacturer,
+      origin,
+    } = req.body;
 
     const now = dayjs().format();
 
@@ -14,13 +25,14 @@ router.post("/", async (req, res, next) => {
 
     await client.query(
       `
-        INSERT INTO public."ProductInfo" () VALUES () 
-      `
+        INSERT INTO public."ProductInfo" (color, "offerGender", size, manufacturer, origin, "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $6) 
+      `,
+      [color, offerGender, size, manufacturer, origin, now]
     );
 
     await client.query(
       `
-      INSERT INTO public."Product" (name, price, count, sale, "categoryId", "infoId", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6 $7, $7);
+      INSERT INTO public."Product" (name, price, count, sale, "categoryId", "infoId", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $7);
     `,
       [name, price, count, sale, categoryId, now]
     );
