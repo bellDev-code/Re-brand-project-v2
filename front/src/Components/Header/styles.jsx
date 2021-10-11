@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Link } from 'react-router-dom';
 
 export const Container = styled.div`
   display: flex;
@@ -12,12 +13,20 @@ export const MenuContainer = styled.ul`
   justify-content: space-between;
 `;
 
-export const MenuButton = styled.button`
+export const MenuLink = styled(Link)`
   border: 0;
   background-color: transparent;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  color: #000000;
+  display: flex;
+  align-items: center;
+
+  :visited {
+    color: #000000;
+  }
 `;
 
 export const LogoContainer = styled.div`

@@ -19,7 +19,7 @@ const App = () => {
           {/* render={()=> <Login />} */}
           <AuthContextProvider>
             <Route exact path="/" component={Main} />
-            <Route path="/shop" component={MainShop} />
+            <Route path="/products" component={MainShop} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/find/username" component={FindUsername} />
