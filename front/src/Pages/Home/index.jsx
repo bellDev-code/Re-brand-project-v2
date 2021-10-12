@@ -1,5 +1,5 @@
 import BestProducts from '@Components/BestProducts';
-import HomeBanner from '@Components/HomeBanner';
+import HomeBanner from '@Components/Banner';
 import InstagramArea from '@Components/InstagramArea';
 import ProductVariation from '@Components/ProductVariation';
 import TodayProducts from '@Components/TodaysProducts';
