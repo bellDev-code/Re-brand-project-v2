@@ -1,5 +1,5 @@
 import ProductBanner from '@Components/Banner/ProductBanner';
-import Filter from '@Components/Filter';
+import Category from '@Components/Category';
 import ProductsList from '@Components/ProductsList';
 import React from 'react';
 import { Container, Wrapper } from './styles';
@@ -9,7 +9,7 @@ const Product = () => {
     <Container>
       <ProductBanner />
       <Wrapper>
-        <Filter />
+        <Category />
         <ProductsList />
       </Wrapper>
     </Container>
