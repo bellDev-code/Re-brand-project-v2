@@ -160,7 +160,7 @@ const initialize = async () => {
     },
     {
       referenceTableName: "ProductInfo",
-      name: "InfoId",
+      name: "infoId",
     },
     {
       referenceTableName: "ProductDetail",
