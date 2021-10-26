@@ -26,7 +26,7 @@ const joinMapping = (row) => {
         },
       };
     }
-    console.log(row);
+    // console.log(row);
   }
 
   for (const [key, value] of Object.entries(result)) {
