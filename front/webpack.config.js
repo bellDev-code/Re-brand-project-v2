@@ -17,6 +17,8 @@ const config = {
       '@Pages': path.resolve(__dirname, 'src/Pages'),
       '@Utils': path.resolve(__dirname, 'src/Utils'),
       '@Assets': path.resolve(__dirname, 'src/Assets'),
+      '@Constants': path.resolve(__dirname, 'src/Constants'),
+      '@Styles': path.resolve(__dirname, 'src/Styles'),
     },
   },
   entry: {
