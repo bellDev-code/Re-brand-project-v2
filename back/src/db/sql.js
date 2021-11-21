@@ -14,7 +14,7 @@ const sql = {
     find: 'SELECT * FROM public."Verification" WHERE payload = $1 AND code = $2',
   },
   product: {
-    findDetail: `
+    findDetail: ({ paging: { offset = 0, limit = 20 } }) => `
     SELECT 
     p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
     pi.id AS info_id, 
@@ -27,10 +27,13 @@ const sql = {
     pd.material AS detail_material,
     b.id AS brand_id,
     b.name AS brand_name
-    FROM public."Product" AS p 
+    FROM public."Product" AS p
     INNER JOIN "ProductInfo" pi ON p."infoId" = pi.id
     INNER JOIN "ProductDetail" pd ON p."detailId" = pd.id
     INNER JOIN "Brand" b ON p."brandId" = b.id
+    ORDER BY p."id" DESC
+    LIMIT ${limit}
+    OFFSET ${offset}
   `,
   },
 };

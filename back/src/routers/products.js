@@ -4,6 +4,7 @@ const db = require("../db");
 const dayjs = require("dayjs");
 const util = require("util");
 const sql = require("../db/sql");
+const { validInt } = require("../utils/parse");
 
 const joinMapping = (row) => {
   let result = {};
@@ -17,7 +18,7 @@ const joinMapping = (row) => {
       const referenceTableName = split[0];
       const referenceColumnName = split[1];
 
-      console.log(referenceTableName, referenceColumnName, value);
+      // console.log(referenceTableName, referenceColumnName, value);
 
       result = {
         ...result,
@@ -38,15 +39,30 @@ const joinMapping = (row) => {
 
 router.get("/", async (req, res, next) => {
   try {
+    const query = req.query;
+
+    const page = validInt(query.page);
+    const perPage = validInt(query.perPage);
+
+    console.log(page, perPage);
     const client = await db.connect();
 
-    let { rows } = await client.query(sql.product.findDetail);
+    let { rows } = await client.query(
+      sql.product.findDetail({
+        paging: {
+          limit: perPage,
+          offset: page * perPage,
+        },
+      })
+    );
 
     // for (const row of rows) {
     //   joinMapping(row);
     // }
 
     rows = rows.map((row) => joinMapping(row));
+
+    client.release();
 
     return res.status(200).json(rows);
   } catch (error) {
