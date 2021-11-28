@@ -1,84 +1,64 @@
 import ProductBanner from '@Components/Banner/ProductBanner';
 import Category from '@Components/Category';
 import ProductsList from '@Components/Product/ProductsList';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { withRouter } from 'react-router';
 import { Container, Wrapper } from './styles';
 import qs from 'query-string';
 import PropType from 'prop-types';
 import { API_URL } from '@Constants/environments';
 import axios from 'axios';
+import PageNavigator from '@Components/PageNavigator';
+import { parsePageForPost, parsePageInput } from '@Utils/pagination';
+import { productNegativeNum } from '@Utils/number';
 
 const Product = ({ location }) => {
-  const parsed = qs.parse(location.search);
-  console.log(parsed);
+  const pageInput = useMemo(() => parsePageInput(qs.parse(location.search)), [location.search]);
 
   const [products, setProducts] = useState([]);
 
-  // Abort Fetch 예제
-  // const getProducts = async (ac) => {
-  //   try {
-  //     console.log(ac);
-
-  //     const data = await fetch(API_URL + '/products', {
-  //       signal: ac.signal,
-  //     });
-
-  //     // setProducts(data);
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // AbortController
-  //   const ac = new AbortController();
-
-  //   getProducts(ac);
-
-  //   setTimeout(() => {
-  //     console.log('abort');
-  //     ac.abort();
-  //   }, 5000);
-  // }, []);
-
-  // const [cancelToken, setCancelToken] = useState();
-
-  const getProducts = async (token) => {
+  const getProducts = async (token, pageInput) => {
+    console.log(pageInput);
     try {
       const { data } = await axios(API_URL + '/products', {
+        params: {
+          page: parsePageForPost(pageInput.page),
+          perPage: productNegativeNum(pageInput.perPage),
+          // ...pageInput,
+        },
         cancelToken: token,
       });
 
       setProducts(data);
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const CancelToken = axios.CancelToken;
 
     const source = CancelToken.source();
 
-    getProducts(source.token);
+    getProducts(source.token, pageInput);
 
     setTimeout(() => {
-      console.log('abort');
       if (source) {
         source.cancel();
       }
     }, 5000);
-  }, []);
+  }, [pageInput]);
 
   return (
     <Container>
       <ProductBanner />
       <Wrapper>
         <Category />
-        <ProductsList list={products} />
+        <div>
+          <ProductsList list={products} />
+          <PageNavigator perPage={15} />
+        </div>
       </Wrapper>
     </Container>
   );

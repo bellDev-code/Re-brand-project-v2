@@ -5,7 +5,7 @@ import { Container, ProductImage } from './styles';
 import { Link } from 'react-router-dom';
 
 const ProductItem = ({ item }) => {
-  console.log(item);
+  // console.log(item);
   return (
     <Container>
       <Link to={`product/${item.id}`}>

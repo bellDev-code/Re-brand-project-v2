@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 const Find = () => {
   const history = useHistory();
 
-  const email = useInput('fujifilm0517@naver.com');
+  const email = useInput();
   const verifyCode = useInput();
   const foundUsername = useInput();
 
