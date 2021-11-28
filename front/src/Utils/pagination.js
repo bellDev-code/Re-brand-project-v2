@@ -1,9 +1,9 @@
 import { productNegativeNum } from './number';
 
-export const parsePageInput = (pageInput) => {
+export const parsePageInput = (pageInput, defaultPerPage) => {
   return {
-    page: parseInt(pageInput.page) || 0,
-    perPage: parseInt(pageInput.perPage) || 0,
+    page: parseInt(pageInput.page) || 1,
+    perPage: parseInt(pageInput.perPage) || defaultPerPage,
   };
 };
 export const parsePageForPost = (aPage) => {

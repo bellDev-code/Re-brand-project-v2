@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-export const Container = styled.section`
-  width: 33.3%;
+export const Container = styled.div`
+  width: 32%;
 `;
 
 export const ProductImage = styled.img`

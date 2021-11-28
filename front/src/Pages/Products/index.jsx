@@ -12,13 +12,19 @@ import PageNavigator from '@Components/PageNavigator';
 import { parsePageForPost, parsePageInput } from '@Utils/pagination';
 import { productNegativeNum } from '@Utils/number';
 
+const PER_PAGE = 15;
+
 const Product = ({ location }) => {
-  const pageInput = useMemo(() => parsePageInput(qs.parse(location.search)), [location.search]);
+  const pageInput = useMemo(() => parsePageInput(qs.parse(location.search), PER_PAGE), [location.search]);
 
   const [products, setProducts] = useState([]);
+  const [pageInfo, setPageInfo] = useState({
+    totalCount: 0,
+  });
 
   const getProducts = async (token, pageInput) => {
     console.log(pageInput);
+
     try {
       const { data } = await axios(API_URL + '/products', {
         params: {
@@ -29,7 +35,10 @@ const Product = ({ location }) => {
         cancelToken: token,
       });
 
-      setProducts(data);
+      console.log('data', data);
+
+      setProducts(data.list);
+      setPageInfo(data.pageInfo);
     } catch (error) {
       console.log(error);
     }
@@ -57,7 +66,7 @@ const Product = ({ location }) => {
         <Category />
         <div>
           <ProductsList list={products} />
-          <PageNavigator perPage={15} />
+          <PageNavigator currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
         </div>
       </Wrapper>
     </Container>
