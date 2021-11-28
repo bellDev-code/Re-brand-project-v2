@@ -44,7 +44,6 @@ router.get("/", async (req, res, next) => {
     const page = validInt(query.page);
     const perPage = validInt(query.perPage);
 
-    console.log(page, perPage);
     const client = await db.connect();
 
     let { rows } = await client.query(
@@ -56,16 +55,25 @@ router.get("/", async (req, res, next) => {
       })
     );
 
-    // for (const row of rows) {
-    //   joinMapping(row);
-    // }
-
     rows = rows.map((row) => joinMapping(row));
+
+    const countResult = await client.query(`
+        SELECT COUNT(*)
+        FROM public."Product" p
+      `);
+
+    const totalCount = countResult.rows[0].count;
 
     client.release();
 
-    return res.status(200).json(rows);
+    return res.status(200).json({
+      pageInfo: {
+        totalCount: parseInt(totalCount) || 0,
+      },
+      list: rows,
+    });
   } catch (error) {
+    console.error(error);
     return res.status(403).json({
       success: false,
       error: error.message,
