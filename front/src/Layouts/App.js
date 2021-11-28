@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Main from './Main';
+import Home from './Home';
 import MainShop from './MainShop';
 import Login from '@Pages/Login';
 import Register from '@Pages/Register';
@@ -13,6 +13,29 @@ import FindPassword from '@Pages/Find/FindPassword';
 import { Global } from '@emotion/react';
 import GlobalStyles from '@Styles/Global';
 import ProductDetail from './Product/Detail';
+import Header from '@Components/Header';
+import Footer from '@Components/Footer';
+
+const MainRouter = () => {
+  return (
+    <>
+      <Route exact path="/" component={Home} />
+      <Route path="/products" component={MainShop} />
+      <Route path="/product/:id" component={ProductDetail} />
+    </>
+  );
+};
+const AuthRouter = () => {
+  return (
+    <>
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/find/username" component={FindUsername} />
+      <Route path="/find/password" component={FindPassword} />
+      <Route path="/change/:username" component={Change} />
+    </>
+  );
+};
 
 const App = () => {
   return (
@@ -20,16 +43,13 @@ const App = () => {
       <Global styles={GlobalStyles} />
       <Router>
         <Switch>
-          {/* render={()=> <Login />} */}
           <AuthContextProvider>
-            <Route exact path="/" component={Main} />
-            <Route path="/products" component={MainShop} />
-            <Route path="/product/:id" component={ProductDetail} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-            <Route path="/find/username" component={FindUsername} />
-            <Route path="/find/password" component={FindPassword} />
-            <Route path="/change/:username" component={Change} />
+            <Header />
+            <div>
+              <MainRouter />
+              <AuthRouter />
+            </div>
+            <Footer />
           </AuthContextProvider>
         </Switch>
       </Router>
