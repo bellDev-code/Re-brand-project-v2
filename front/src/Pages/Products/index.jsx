@@ -23,7 +23,7 @@ const Product = ({ location }) => {
   });
 
   const getProducts = async (token, pageInput) => {
-    console.log(pageInput);
+    // console.log(pageInput);
 
     try {
       const { data } = await axios(API_URL + '/products', {
@@ -34,8 +34,6 @@ const Product = ({ location }) => {
         },
         cancelToken: token,
       });
-
-      console.log('data', data);
 
       setProducts(data.list);
       setPageInfo(data.pageInfo);

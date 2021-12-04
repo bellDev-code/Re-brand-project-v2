@@ -73,7 +73,7 @@ const Register = () => {
           name: name.value,
           phoneNumber: phoneNumber.value,
         });
-        console.log(data);
+        // console.log(data);
 
         if (data?.success) {
           history.push('/login');

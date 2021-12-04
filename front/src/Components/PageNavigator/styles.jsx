@@ -11,3 +11,11 @@ export const Button = styled(Link)`
   cursor: pointer;
   font-size: 15px;
 `;
+
+export const CurrentButton = styled.span`
+  padding: 4px 8px;
+  margin: 0px 8px;
+  background-color: transparent;
+  border: 0px;
+  font-size: 15px;
+`;

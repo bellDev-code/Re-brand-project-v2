@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Button } from './styles';
+import { Container, Button, CurrentButton } from './styles';
 import { FlexBox } from '@Styles/Common';
 
 const PageNavigator = ({ currentPage, perPage, pageInfo }) => {
-  console.log('pageInfo', pageInfo);
+  // console.log('pageInfo', pageInfo);
   const pageCount = useMemo(() => {
     let result = Math.floor(pageInfo.totalCount / perPage);
 
@@ -22,9 +22,9 @@ const PageNavigator = ({ currentPage, perPage, pageInfo }) => {
         }).map((_, index) => {
           if (currentPage === index + 1) {
             return (
-              <Button disable key={index} style={{ fontWeight: 700 }}>
+              <CurrentButton key={index} style={{ fontWeight: 700, pointerEvents: 'none' }}>
                 {index + 1}
-              </Button>
+              </CurrentButton>
             );
           }
           return (
