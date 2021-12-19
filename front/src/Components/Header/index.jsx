@@ -1,18 +1,15 @@
 import React, { useContext } from 'react';
-import { Container, MenuContainer, MenuLink, LogoContainer } from './styles.jsx';
+import { Container, MenuContainer, MenuLink, LogoContainer, Logo } from './styles.jsx';
 import HeaderMenu from '@Components/Header/HeaderMenu/index.jsx';
 import LogoImage from '@Assets/Layouts/re-logo.png';
 import PropTypes from 'prop-types';
 import { AuthContext } from '@Hooks/Contexts/AuthContext.jsx';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const { user } = useContext(AuthContext);
 
   const MenuList = [
-    {
-      name: '홈',
-      url: '/',
-    },
     {
       name: '상품',
       url: '/products',
@@ -34,7 +31,9 @@ const Header = () => {
   return (
     <Container>
       <LogoContainer>
-        <img src={LogoImage} />
+        <Link to="/">
+          <Logo src={LogoImage} />
+        </Link>
       </LogoContainer>
       <MenuContainer>
         {MenuList.map((item, index) => {

@@ -8,10 +8,18 @@ const HeaderMenu = ({ user }) => {
   return (
     <MenuContainer>
       {!user && <Link to="/login">login</Link>}
-      <BsFillHeartFill />
-      <BsFillBucketFill />
-      <BsSearch />
-      <BsJustify />
+      <Link to="/">
+        <BsFillHeartFill />
+      </Link>
+      <Link to="/">
+        <BsFillBucketFill />
+      </Link>
+      <Link to="/">
+        <BsSearch />
+      </Link>
+      <Link to="/">
+        <BsJustify />
+      </Link>
     </MenuContainer>
   );
 };

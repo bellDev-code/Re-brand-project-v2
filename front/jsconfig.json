@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "target": "es6",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": false,
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "@Components/*": ["src/Components/*"],

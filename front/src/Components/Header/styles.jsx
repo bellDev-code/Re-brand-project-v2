@@ -16,7 +16,7 @@ export const MenuContainer = styled.ul`
 export const MenuLink = styled(Link)`
   border: 0;
   background-color: transparent;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
@@ -39,4 +39,8 @@ export const LogoContainer = styled.div`
   & > img {
     width: 100%;
   }
+`;
+
+export const Logo = styled.img`
+  width: 100%;
 `;
