@@ -50,6 +50,7 @@ const initialize = async () => {
       name: "password",
       type: "TEXT",
     },
+
     {
       name: "name",
       type: "TEXT",
@@ -77,6 +78,10 @@ const initialize = async () => {
     {
       name: "verifyType",
       type: "verifytype",
+    },
+    {
+      name: "code",
+      type: "TEXT",
     },
     {
       name: "isVerified",

@@ -84,7 +84,39 @@ const queryResolveAll = async (client, tableName, elements, callback) => {
 const generateFKName = (tableName, referenceTableName, name) =>
   `fk_${tableName.toLowerCase()}_${referenceTableName.toLowerCase()}_${name.toLowerCase()}`;
 
+const whereInIds = (query, key, id) => {
+  if (id) {
+    if (Array.isArray(id)) {
+      if (!id.length) {
+        throw new Error("id does not exist.");
+      }
+      query += ` 
+      WHERE ${key} IN (${id.join(",")})
+      `;
+    } else {
+      query += ` 
+      WHERE ${key} = ${id}
+      `;
+    }
+  }
+  return query;
+};
+
+const setOffset = (query, paging) => {
+  if (paging) {
+    const { limit = 20, offset = 0 } = paging;
+
+    query += `
+      LIMIT ${limit}
+      OFFSET ${offset}
+      `;
+  }
+  return query;
+};
+
 exports.createTable = createTable;
 exports.addColumns = addColumns;
 exports.setRelation = setRelation;
 exports.setRelations = setRelations;
+exports.whereInIds = whereInIds;
+exports.setOffset = setOffset;

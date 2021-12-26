@@ -1,3 +1,5 @@
+const { whereInIds, setOffset } = require("./scripts");
+
 const sql = {
   user: {
     findByEmail: (fields) =>
@@ -14,27 +16,54 @@ const sql = {
     find: 'SELECT * FROM public."Verification" WHERE payload = $1 AND code = $2',
   },
   product: {
-    findDetail: ({ paging: { offset = 0, limit = 20 } }) => `
-    SELECT 
-    p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
-    pi.id AS info_id, 
-    pi.color AS info_color, 
-    pi."offerGender" AS "info_offerGender", 
-    pi.size AS info_size, 
-    pi.manufacturer AS info_manufacturer, 
-    pi.origin AS info_origin, 
-    pd.id AS detail_id, 
-    pd.material AS detail_material,
-    b.id AS brand_id,
-    b.name AS brand_name
-    FROM public."Product" AS p
-    INNER JOIN "ProductInfo" pi ON p."infoId" = pi.id
-    INNER JOIN "ProductDetail" pd ON p."detailId" = pd.id
-    INNER JOIN "Brand" b ON p."brandId" = b.id
-    ORDER BY p."id" DESC
-    LIMIT ${limit}
-    OFFSET ${offset}
-  `,
+    find: ({ id, paging }) => {
+      let query = `
+      SELECT 
+      p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
+      b.id AS brand_id,
+      b.name AS brand_name
+      FROM public."Product" AS p
+      INNER JOIN "Brand" b ON p."brandId" = b.id
+      `;
+
+      query = whereInIds(query, "p.id", id);
+
+      query += `
+      ORDER BY p."id" DESC
+      `;
+
+      setOffset(query, paging);
+
+      return query;
+    },
+    findDetail: ({ id, paging }) => {
+      let query = `SELECT 
+      p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
+      pi.id AS info_id, 
+      pi.color AS info_color, 
+      pi."offerGender" AS "info_offerGender", 
+      pi.size AS info_size, 
+      pi.manufacturer AS info_manufacturer, 
+      pi.origin AS info_origin, 
+      pd.id AS detail_id, 
+      pd.material AS detail_material,
+      b.id AS brand_id,
+      b.name AS brand_name
+      FROM public."Product" AS p
+      INNER JOIN "ProductInfo" pi ON p."infoId" = pi.id
+      INNER JOIN "ProductDetail" pd ON p."detailId" = pd.id
+      INNER JOIN "Brand" b ON p."brandId" = b.id`;
+
+      query = whereInIds(query, "p.id", id);
+
+      query += `
+      ORDER BY p."id" DESC
+      `;
+
+      setOffset(query, paging);
+
+      return query;
+    },
   },
 };
 

@@ -37,6 +37,7 @@ const joinMapping = (row) => {
   return row;
 };
 
+// get product list (pagination)
 router.get("/", async (req, res, next) => {
   try {
     const query = req.query;
@@ -46,8 +47,14 @@ router.get("/", async (req, res, next) => {
 
     const client = await db.connect();
 
+    // const { rows: testRows } = await client.query(
+    //   sql.product.find({ id: [28, 29, 30, 31] })
+    // );
+
+    // console.log("testRows", testRows);
+
     let { rows } = await client.query(
-      sql.product.findDetail({
+      sql.product.find({
         paging: {
           limit: perPage,
           offset: page * perPage,
@@ -164,8 +171,17 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/info", async (req, res, next) => {
+router.get("/:id", async (req, res, next) => {
   try {
+    const { id } = req.params;
+
+    const client = await db.connect();
+
+    let { rows } = await client.query(sql.product.findDetail({ id: id }));
+
+    rows = rows.map((row) => joinMapping(row));
+
+    return res.status(200).json(rows[0]);
   } catch (error) {
     console.log(error);
     return res.status(403).json({
@@ -174,5 +190,7 @@ router.post("/info", async (req, res, next) => {
     });
   }
 });
+
+// rebrand.com/product/3
 
 module.exports = router;

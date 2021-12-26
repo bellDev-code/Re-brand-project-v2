@@ -55,6 +55,8 @@ const createVerification = async (client, { type, payload }) => {
     [payload, type.toUpperCase()]
   );
 
+  const now = dayjs().format();
+
   const expiredAt = dayjs()
     .minute(dayjs().minute() + 5)
     .format();
@@ -63,9 +65,9 @@ const createVerification = async (client, { type, payload }) => {
 
   await client.query(
     `
-      INSERT INTO public."Verification" ("verifyType", payload, code, "isVerified", "expiredAt") VALUES($1, $2, $3, $4, $5)
+      INSERT INTO public."Verification" ("verifyType", payload, code, "isVerified", "expiredAt", "updatedAt", "createdAt") VALUES($1, $2, $3, $4, $5, $6, $6)
     `,
-    [type.toUpperCase(), payload, code, false, expiredAt]
+    [type.toUpperCase(), payload, code, false, expiredAt, now]
   );
 
   return {
