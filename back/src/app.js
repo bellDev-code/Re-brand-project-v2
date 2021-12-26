@@ -48,6 +48,9 @@ app.set("PORT", process.env.PORT || 4190);
 const api = require("./routers");
 app.use("/api", api);
 
+// Express Static Router
+app.use(express.static("./assets"));
+
 app.listen(app.get("PORT"), () => {
   console.log(`listen on localhost:${app.get("PORT")}`);
 });
