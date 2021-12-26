@@ -13,7 +13,8 @@
       "@Utils/*": ["src/Utils/*"],
       "@Assets/*": ["src/Assets/*"],
       "@Constants/*": ["src/Constants/*"],
-      "@Styles/*": ["src/Styles/*"]
+      "@Styles/*": ["src/Styles/*"],
+      "@Api/*": ["src/Api/*"]
     }
   }
 }

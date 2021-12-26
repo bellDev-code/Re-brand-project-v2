@@ -62,7 +62,7 @@ const Product = ({ location }) => {
       <ProductBanner />
       <Wrapper>
         <Category />
-        <div>
+        <div style={{ width: '80%' }}>
           <ProductsList list={products} />
           <PageNavigator currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
         </div>

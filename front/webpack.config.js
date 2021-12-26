@@ -19,6 +19,7 @@ const config = {
       '@Assets': path.resolve(__dirname, 'src/Assets'),
       '@Constants': path.resolve(__dirname, 'src/Constants'),
       '@Styles': path.resolve(__dirname, 'src/Styles'),
+      '@Api': path.resolve(__dirname, 'src/Api'),
     },
   },
   entry: {
