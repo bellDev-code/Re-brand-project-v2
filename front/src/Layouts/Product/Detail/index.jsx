@@ -14,7 +14,10 @@ import {
   SalePercent,
   PriceWrapper,
   ProductInfoWrapper,
+  ProductDetails,
 } from './styles';
+import TestImage from '@Assets/Layouts/blanc.jpeg';
+import SwiperImgContainer from '@Components/SwiperImage';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -24,7 +27,7 @@ const ProductDetail = () => {
   useEffect(async () => {
     const product = await getProduct(id);
 
-    console.log(product);
+    // console.log(product);
     setProduct(product);
   }, []);
 
@@ -35,15 +38,18 @@ const ProductDetail = () => {
         <ItemBrand>{product?.brand.name}</ItemBrand>
         <Wrapper>
           <ImageWrapper>
-            <MainImage></MainImage>
+            <MainImage src={TestImage}></MainImage>
+            <SwiperImgContainer></SwiperImgContainer>
           </ImageWrapper>
           <ProductInfoWrapper>
             <PriceWrapper>
-              <SalePercent>{product?.sale}</SalePercent>
+              <SalePercent>할인율 : {product?.sale}</SalePercent>
               <ItemPrice>{product?.price}</ItemPrice>
             </PriceWrapper>
-            <div>{product?.info.color}</div>
-            <div>{product?.detail.material}</div>
+            <ProductDetails>
+              <div>{product?.info.color}</div>
+              <div>{product?.detail.material}</div>
+            </ProductDetails>
           </ProductInfoWrapper>
         </Wrapper>
       </ItemBox>

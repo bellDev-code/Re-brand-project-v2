@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { BsTypeBold } from 'react-icons/bs';
 
 export const Container = styled.div`
   display: flex;
@@ -14,6 +13,7 @@ export const ItemBox = styled.div`
   padding: 30px 40px;
   background: #fff;
   width: 50%;
+  height: 80%;
   & > h3 {
     margin: 0;
     font-size: 24px;
@@ -27,7 +27,9 @@ export const ItemTitle = styled.div`
   font-weight: 400;
 `;
 
-export const ItemBrand = styled.div``;
+export const ItemBrand = styled.div`
+  padding-top: 20px;
+`;
 
 export const Wrapper = styled.div`
   display: flex;
@@ -35,13 +37,19 @@ export const Wrapper = styled.div`
 
 export const PriceWrapper = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const ImageWrapper = styled.div`
   flex: 1;
+  width: 50%;
 `;
 
-export const MainImage = styled.img``;
+export const MainImage = styled.img`
+  width: 250px;
+  height: 300px;
+`;
 
 export const ProductInfoWrapper = styled.div`
   flex: 1;
@@ -54,3 +62,5 @@ export const ItemPrice = styled.div`
   font-size: 2.5rem;
   font-weight: 600;
 `;
+
+export const ProductDetails = styled.div``;
