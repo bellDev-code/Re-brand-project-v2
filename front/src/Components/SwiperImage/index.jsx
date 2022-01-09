@@ -1,51 +1,32 @@
 import React from 'react';
-import { Container } from './styles';
+import { Container, Image } from './styles';
 import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import TestImage from '@Assets/Layouts/blanc.jpeg';
+import PropTypes from 'prop-types';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
+import './styles.css';
 
-const SwiperImgContainer = () => {
-  const swiperSlides = [
-    {
-      url: TestImage,
-    },
-    {
-      url: TestImage,
-    },
-    {
-      url: TestImage,
-    },
-    {
-      url: TestImage,
-    },
-    {
-      url: TestImage,
-    },
-    {
-      url: TestImage,
-    },
-  ];
-
+const SwiperImage = ({ images }) => {
   return (
     <Container>
-      <Swiper
-        // install Swiper modules
-        modules={[Navigation]}
-        spaceBetween={50}
-        slidesPerView={1}
-        navigation
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log('slide change')}
-      >
-        {swiperSlides.map((item, index) => {
-          return <SwiperSlide src={item.url} key={index}></SwiperSlide>;
+      <Swiper modules={[Navigation]} slidesPerView={1} navigation>
+        {images.map((item, index) => {
+          return (
+            <SwiperSlide key={item.id}>
+              <Image src={item.url} />
+            </SwiperSlide>
+          );
         })}
       </Swiper>
     </Container>
   );
 };
 
-export default SwiperImgContainer;
+SwiperImage.propTypes = {
+  images: PropTypes.array,
+};
+
+export default SwiperImage;

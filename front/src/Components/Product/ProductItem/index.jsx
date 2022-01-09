@@ -10,7 +10,7 @@ const ProductItem = ({ item }) => {
     <Container>
       <Link to={`product/${item.id}`}>
         <div>
-          <ProductImage src={TempImage} />
+          <ProductImage src={item.thumbnail ? item.thumbnail.url : TempImage} />
         </div>
         <div>{item.name}</div>
         <div>{item.price}</div>
