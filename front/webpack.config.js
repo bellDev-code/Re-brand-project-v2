@@ -1,6 +1,7 @@
 const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -66,16 +67,20 @@ const config = {
       },
     ],
   },
-  plugins: [new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' })],
+  plugins: [
+    new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
+    new HtmlWebpackPlugin({
+      template: 'index.html',
+    }),
+  ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: '[name].js',
-    publicPath: '/dist/',
+    publicPath: '/',
   },
   devServer: {
-    historyApiFallback: true, // react router
+    historyApiFallback: true, // react router 새로고침 시 잃은 history 복구
     port: 3090,
-    publicPath: '/dist/',
     // proxy: {
     //   '/api/': {
     //     target: 'http://localhost:3095',
