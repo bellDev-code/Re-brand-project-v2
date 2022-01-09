@@ -2,15 +2,12 @@ const { whereInIds, setOffset } = require("./scripts");
 
 const sql = {
   user: {
-    findByEmail: (fields) =>
-      `SELECT ${String(fields)} FROM public."User" WHERE email = $1`,
+    findByEmail: (fields) => `SELECT ${String(fields)} FROM public."User" WHERE email = $1`,
     checkByUsername: 'SELECT * FROM public."User" WHERE username = $1',
     checkByEmail: 'SELECT * FROM public."User" WHERE email = $1',
-    loginUser:
-      'SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1',
+    loginUser: 'SELECT id, email, name, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1',
     isExists: 'SELECT * FROM public."User" WHERE username = $1 OR email = $2',
-    getUser:
-      'SELECT id, name, email, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1',
+    getUser: 'SELECT id, name, email, "createdAt", "phoneNumber" FROM public."User" WHERE id = $1',
   },
   verify: {
     find: 'SELECT * FROM public."Verification" WHERE payload = $1 AND code = $2',
@@ -21,9 +18,14 @@ const sql = {
       SELECT 
       p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
       b.id AS brand_id,
-      b.name AS brand_name
+      b.name AS brand_name,
+      f.id AS thumbnail_id,
+      f.url AS thumbnail_url,
+      f.key AS thumbnail_key
       FROM public."Product" AS p
       INNER JOIN "Brand" b ON p."brandId" = b.id
+      INNER JOIN "File" f ON p."thumbnailId" = f.id
+
       `;
 
       query = whereInIds(query, "p.id", id);
@@ -48,11 +50,17 @@ const sql = {
       pd.id AS detail_id, 
       pd.material AS detail_material,
       b.id AS brand_id,
-      b.name AS brand_name
+      b.name AS brand_name,
+      f.id AS thumbnail_id,
+      f.url AS thumbnail_url,
+      f.key AS thumbnail_key
       FROM public."Product" AS p
       INNER JOIN "ProductInfo" pi ON p."infoId" = pi.id
       INNER JOIN "ProductDetail" pd ON p."detailId" = pd.id
-      INNER JOIN "Brand" b ON p."brandId" = b.id`;
+      INNER JOIN "Brand" b ON p."brandId" = b.id
+      INNER JOIN "File" f ON p."thumbnailId" = f.id
+      
+      `;
 
       query = whereInIds(query, "p.id", id);
 
@@ -63,6 +71,15 @@ const sql = {
       setOffset(query, paging);
 
       return query;
+    },
+  },
+  file: {
+    find: (key, id) => {
+      return `
+        SELECT *
+        FROM public."File" f
+        WHERE f."${key}" = ${id}
+      `;
     },
   },
 };

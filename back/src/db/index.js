@@ -38,6 +38,20 @@ const initialize = async () => {
     `
   );
 
+  // Create File Table
+
+  await createTable(client, "File");
+  await addColumns(client, "File", [
+    {
+      name: "url",
+      type: "TEXT",
+    },
+    {
+      name: "key",
+      type: "TEXT",
+    },
+  ]);
+
   // Create user table
   await createTable(client, "User");
   await addColumns(client, "User", [
@@ -50,7 +64,6 @@ const initialize = async () => {
       name: "password",
       type: "TEXT",
     },
-
     {
       name: "name",
       type: "TEXT",
@@ -158,6 +171,7 @@ const initialize = async () => {
       type: "FLOAT",
     },
   ]);
+
   await setRelations(client, "Product", [
     {
       referenceTableName: "Category",
@@ -174,6 +188,18 @@ const initialize = async () => {
     {
       referenceTableName: "Brand",
       name: "brandId",
+    },
+    {
+      referenceTableName: "File",
+      name: "thumbnailId",
+    },
+  ]);
+
+  await setRelations(client, "File", [
+    {
+      referenceTableName: "Product",
+      name: "productImageId",
+      nullable: true,
     },
   ]);
 

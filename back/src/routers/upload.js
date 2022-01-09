@@ -12,7 +12,7 @@ const upload = multer({
 
 const makeUploadResponse = (file) => {
   return {
-    url: file.path,
+    url: process.env.HOST + "/" + file.path,
     key: file.filename,
   };
 };

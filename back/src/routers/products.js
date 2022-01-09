@@ -88,6 +88,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+// Create Product
 router.post("/", async (req, res, next) => {
   try {
     const {
@@ -99,6 +100,8 @@ router.post("/", async (req, res, next) => {
       brandId,
       info: { color, offerGender, size, manufacturer, origin },
       detail: { material },
+      thumbnail,
+      images,
     } = req.body;
 
     const now = dayjs().format();
@@ -135,17 +138,59 @@ router.post("/", async (req, res, next) => {
 
       const detailId = detailResult.rows[0].id;
 
-      await client.query(
+      let thumbId;
+
+      if (thumbnail) {
+        if (!thumbnail.url || !thumbnail.key) {
+          throw new Error();
+        }
+
+        const {
+          rows: [thumb],
+        } = await client.query(
+          `
+        INSERT INTO public."File" (url, key, "createdAt", "updatedAt") VALUES ($1, $2, $3, $3)
+        RETURNING id
+        `,
+          [thumbnail.url, thumbnail.key, now]
+        );
+
+        thumbId = thumb.id;
+      }
+
+      console.log("check");
+      const {
+        rows: [product],
+      } = await client.query(
         `
-      INSERT INTO public."Product" (name, price, count, sale, "categoryId", "brandId", "infoId", "detailId", "createdAt", "updatedAt") 
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $9);
+      INSERT INTO public."Product" (name, price, count, sale, "categoryId", "brandId", "infoId", "detailId", "thumbnailId", "createdAt", "updatedAt") 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
+      RETURNING id
     `,
-        [name, price, count, sale, categoryId, brandId, infoId, detailId, now]
+        [name, price, count, sale, categoryId, brandId, infoId, detailId, thumbId, now]
       );
 
-      // const youngdoError = new Error("영도");
-      // youngdoError.name = "영도에러";
-      // throw youngdoError;
+      if (images && images.length > 0) {
+        console.log(product.id);
+        const promises = images
+          .filter((image) => {
+            if (!image.url || !image.key) {
+              return false;
+            }
+            return true;
+          })
+          .map(async (image) => {
+            console.log(image);
+            return client.query(
+              `
+            INSERT INTO public."File" (url, key, "productImageId", "createdAt", "updatedAt") VALUES ($1, $2, $3, $4, $4)
+            `,
+              [image.url, image.key, product.id, now]
+            );
+          });
+
+        await Promise.all(promises);
+      }
 
       await client.query("COMMIT");
     } catch (error) {
@@ -179,9 +224,13 @@ router.get("/:id", async (req, res, next) => {
 
     let { rows } = await client.query(sql.product.findDetail({ id: id }));
 
-    rows = rows.map((row) => joinMapping(row));
+    const [product] = rows.map((row) => joinMapping(row));
 
-    return res.status(200).json(rows[0]);
+    const { rows: images } = await client.query(sql.file.find("productImageId", product.id));
+
+    product.images = images;
+
+    return res.status(200).json(product);
   } catch (error) {
     console.log(error);
     return res.status(403).json({

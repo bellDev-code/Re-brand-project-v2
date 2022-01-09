@@ -9,17 +9,11 @@ const createTable = async (client, tableName, onlyId) => {
   `
   );
 };
-const addColumn = async (
-  client,
-  tableName,
-  { name, type, nullable, unique }
-) => {
+const addColumn = async (client, tableName, { name, type, nullable, unique }) => {
   await client.query(
     `
       ALTER TABLE public."${tableName}"
-      ADD COLUMN IF NOT EXISTS "${name}" ${type} ${nullScript(
-      nullable
-    )} ${uniqueScript(unique)}
+      ADD COLUMN IF NOT EXISTS "${name}" ${type} ${nullScript(nullable)} ${uniqueScript(unique)}
       `
   );
 };
@@ -31,14 +25,10 @@ const addColumns = async (client, tableName, columns) => {
 const nullScript = (nullable) => (nullable ? "" : "NOT NULL");
 const uniqueScript = (unique) => (unique ? "UNIQUE" : "");
 
-const setRelation = async (
-  client,
-  tableName,
-  { referenceTableName, name, referenceColumnName, nullable }
-) => {
+const setRelation = async (client, tableName, { referenceTableName, name, referenceColumnName, nullable }) => {
   await addColumn(client, tableName, {
     name: name,
-    type: "SERIAL",
+    type: "int",
     nullable: nullable,
   });
 
@@ -57,9 +47,7 @@ const setRelation = async (
         ALTER TABLE public."${tableName}"
         ADD CONSTRAINT ${FKName}
         FOREIGN KEY("${name}")
-          REFERENCES public."${referenceTableName}"(${
-      referenceColumnName || "id"
-    });
+          REFERENCES public."${referenceTableName}"(${referenceColumnName || "id"});
     END IF;
     END
     $$

@@ -49,7 +49,7 @@ const api = require("./routers");
 app.use("/api", api);
 
 // Express Static Router
-app.use(express.static("./assets"));
+app.use("/assets", express.static("./assets"));
 
 app.listen(app.get("PORT"), () => {
   console.log(`listen on localhost:${app.get("PORT")}`);
