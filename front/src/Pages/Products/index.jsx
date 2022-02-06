@@ -1,5 +1,4 @@
 import ProductBanner from '@Components/Banner/ProductBanner';
-import Category from '@Components/Category';
 import ProductsList from '@Components/Product/ProductsList';
 import React, { useEffect, useMemo, useState } from 'react';
 import { withRouter } from 'react-router';
@@ -11,10 +10,11 @@ import axios from 'axios';
 import PageNavigator from '@Components/PageNavigator';
 import { parsePageForPost, parsePageInput } from '@Utils/pagination';
 import { productNegativeNum } from '@Utils/number';
+import ProductFilter from '@Components/Product/ProductFilter';
 
 const PER_PAGE = 15;
 
-const Product = ({ location }) => {
+const Products = ({ location }) => {
   const pageInput = useMemo(() => parsePageInput(qs.parse(location.search), PER_PAGE), [location.search]);
 
   const [products, setProducts] = useState([]);
@@ -22,7 +22,23 @@ const Product = ({ location }) => {
     totalCount: 0,
   });
 
-  const getProducts = async (token, pageInput) => {
+  const [conditions, setConditions] = useState();
+
+  const get = async (value) => {
+    const CancelToken = axios.CancelToken;
+
+    const source = CancelToken.source();
+
+    getProducts(source.token, pageInput, value);
+
+    setTimeout(() => {
+      if (source) {
+        source.cancel();
+      }
+    }, 5000);
+  };
+
+  const getProducts = async (token, pageInput, conditions) => {
     // console.log(pageInput);
 
     try {
@@ -30,6 +46,7 @@ const Product = ({ location }) => {
         params: {
           page: parsePageForPost(pageInput.page),
           perPage: productNegativeNum(pageInput.perPage),
+          conditions: conditions,
           // ...pageInput,
         },
         cancelToken: token,
@@ -44,24 +61,20 @@ const Product = ({ location }) => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const CancelToken = axios.CancelToken;
 
-    const source = CancelToken.source();
-
-    getProducts(source.token, pageInput);
-
-    setTimeout(() => {
-      if (source) {
-        source.cancel();
-      }
-    }, 5000);
+    get(conditions);
   }, [pageInput]);
+
+  const onChangeFilter = (value) => {
+    setConditions(value);
+    get(value);
+  };
 
   return (
     <Container>
       <ProductBanner />
       <Wrapper>
-        <Category />
+        <ProductFilter onChange={onChangeFilter} />
         <div style={{ width: '80%' }}>
           <ProductsList list={products} />
           <PageNavigator currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
@@ -110,8 +123,8 @@ const Product = ({ location }) => {
 
 // 정렬 필수 (정렬 조건은 아무거나 가능)
 
-Product.propTypes = {
+Products.propTypes = {
   location: PropType.object,
 };
 
-export default withRouter(Product);
+export default withRouter(Products);
