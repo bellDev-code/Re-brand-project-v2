@@ -7,6 +7,8 @@ const helmet = require("helmet");
 const LocalStore = require("session-file-store")(session);
 
 const app = express();
+
+// body parser
 app.use(express.json());
 app.use(
   express.urlencoded({

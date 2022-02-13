@@ -13,28 +13,45 @@ const sql = {
     find: 'SELECT * FROM public."Verification" WHERE payload = $1 AND code = $2',
   },
   product: {
-    find: ({ id, paging }) => {
+    find: ({ id, paging, conditions }) => {
       let query = `
-      SELECT 
-      p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
-      b.id AS brand_id,
-      b.name AS brand_name,
-      f.id AS thumbnail_id,
-      f.url AS thumbnail_url,
-      f.key AS thumbnail_key
-      FROM public."Product" AS p
-      INNER JOIN "Brand" b ON p."brandId" = b.id
-      INNER JOIN "File" f ON p."thumbnailId" = f.id
-
+        SELECT 
+        p.id, p.name, p.price, p.count, p.sale, p."categoryId", p."createdAt", p."updatedAt",
+        b.id AS brand_id,
+        b.name AS brand_name,
+        f.id AS thumbnail_id,
+        f.url AS thumbnail_url,
+        f.key AS thumbnail_key
+        FROM public."Product" AS p
+        INNER JOIN "Brand" b ON p."brandId" = b.id
+        INNER JOIN "File" f ON p."thumbnailId" = f.id
       `;
 
       query = whereInIds(query, "p.id", id);
+
+      // conditions  {}
+
+      if (conditions) {
+        if (conditions.categoryId) {
+          if (!id) {
+            query += "WHERE";
+          } else {
+            query += " AND";
+          }
+
+          query += `
+            p."categoryId" = ${conditions.categoryId}
+          `;
+        }
+      }
 
       query += `
       ORDER BY p."id" DESC
       `;
 
-      setOffset(query, paging);
+      query = setOffset(query, paging);
+
+      console.log(query);
 
       return query;
     },
@@ -68,8 +85,23 @@ const sql = {
       ORDER BY p."id" DESC
       `;
 
-      setOffset(query, paging);
+      query = setOffset(query, paging);
 
+      return query;
+    },
+    count: ({ conditions }) => {
+      let query = `
+        SELECT COUNT(*)
+        FROM public."Product" p
+    `;
+
+      if (conditions) {
+        if (conditions.categoryId) {
+          query += `
+            WHERE p."categoryId" = ${conditions.categoryId}
+          `;
+        }
+      }
       return query;
     },
   },

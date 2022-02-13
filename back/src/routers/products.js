@@ -42,16 +42,13 @@ router.get("/", async (req, res, next) => {
   try {
     const query = req.query;
 
+    // string화 된 오브젝트를 object type으로 parse
+    const conditions = query?.conditions && JSON.parse(query.conditions);
+
     const page = validInt(query.page);
     const perPage = validInt(query.perPage);
 
     const client = await db.connect();
-
-    // const { rows: testRows } = await client.query(
-    //   sql.product.find({ id: [28, 29, 30, 31] })
-    // );
-
-    // console.log("testRows", testRows);
 
     let { rows } = await client.query(
       sql.product.find({
@@ -59,15 +56,17 @@ router.get("/", async (req, res, next) => {
           limit: perPage,
           offset: page * perPage,
         },
+        conditions,
       })
     );
 
     rows = rows.map((row) => joinMapping(row));
 
-    const countResult = await client.query(`
-        SELECT COUNT(*)
-        FROM public."Product" p
-      `);
+    const countResult = await client.query(
+      sql.product.count({
+        conditions,
+      })
+    );
 
     const totalCount = countResult.rows[0].count;
 
@@ -216,6 +215,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+// Get Product By Id (Product Detail)
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
