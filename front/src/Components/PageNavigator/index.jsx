@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Container, Button, CurrentButton } from './styles';
 import { FlexBox } from '@Styles/Common';
 
-const PageNavigator = ({ currentPage, perPage, pageInfo }) => {
+const PageNavigator = ({ currentPage, perPage, pageInfo, conditions }) => {
   // console.log('pageInfo', pageInfo);
   const pageCount = useMemo(() => {
     let result = Math.floor(pageInfo.totalCount / perPage);
@@ -13,6 +13,16 @@ const PageNavigator = ({ currentPage, perPage, pageInfo }) => {
     }
     return result;
   }, [pageInfo]);
+
+  const to = useCallback((index) => {
+    let result = `/products?page=${index + 1}&perPage=${perPage}`
+
+    if(conditions) {
+      result += `&conditions=${conditions}`
+    }
+
+    return result;
+  }, [perPage, conditions])
 
   return (
     <Container>
@@ -28,7 +38,7 @@ const PageNavigator = ({ currentPage, perPage, pageInfo }) => {
             );
           }
           return (
-            <Button to={`/products?page=${index + 1}&&perPage=${perPage}`} key={index}>
+            <Button to={to(index)} key={index}>
               {index + 1}
             </Button>
           );
@@ -42,6 +52,7 @@ PageNavigator.propTypes = {
   currentPage: PropTypes.number,
   perPage: PropTypes.number,
   pageInfo: PropTypes.object,
+  conditions: PropTypes.string,
 };
 
 export default PageNavigator;

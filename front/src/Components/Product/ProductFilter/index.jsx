@@ -1,4 +1,3 @@
-import Selector from '@Components/Selector';
 import { API_URL } from '@Constants/environments';
 import useSelector from '@Hooks/useSelector';
 import axios from 'axios';
@@ -18,6 +17,7 @@ const ProductFilter = ({ onChange }) => {
       });
 
       setCategories(result.data);
+      
     } catch (error) {
       console.log(error);
     }
@@ -35,11 +35,6 @@ const ProductFilter = ({ onChange }) => {
     },
   ]);
 
-  // const [filterParams, setFilterParams] = useState({});
-
-  // 서버에 요청할 state
-  const [selectCategory, setSelectCategory] = useState();
-
   useEffect(() => {
     getCategories();
   }, []);
@@ -48,8 +43,7 @@ const ProductFilter = ({ onChange }) => {
 
   const onClick = () => {
     const params = {
-      category1: cSelector1.value,
-      category2: cSelector2.value,
+      categoryId: cSelector1.value
     };
 
     onChange(params);
@@ -58,7 +52,6 @@ const ProductFilter = ({ onChange }) => {
   return (
     <Container>
       {cSelector1.render()}
-      {cSelector2.render()}
       {/* <Selector />
       <Selector />
       <Selector /> */}

@@ -11,25 +11,60 @@ import PageNavigator from '@Components/PageNavigator';
 import { parsePageForPost, parsePageInput } from '@Utils/pagination';
 import { productNegativeNum } from '@Utils/number';
 import ProductFilter from '@Components/Product/ProductFilter';
+import { useHistory } from 'react-router-dom';
 
 const PER_PAGE = 15;
 
 const Products = ({ location }) => {
+
+  // 1. url 넣는 방법
+  // const parseCondtions = (input) => {
+  //   return {
+  //     categoryId: input?.categoryId,
+  //   }
+  // }
+
+  // 2. base64를 사용한 방법
+  const parseCondtions = (input) => {
+
+    if(!('conditions' in input)) {
+      return undefined;
+    }
+
+    // 위에가 최신문법
+    // if(typeOf input === 'object' && input.hasOwnProperty('conditions')) {}
+
+    let conditions;
+
+    try {
+      const str = window.atob(input.conditions)
+      conditions = JSON.parse(str);
+    } catch (error) {
+      return undefined
+    }
+
+    return conditions;
+  }
+
+
+  // console.log(location.search)
   const pageInput = useMemo(() => parsePageInput(qs.parse(location.search), PER_PAGE), [location.search]);
+
+  const conditions = useMemo(() => parseCondtions(qs.parse(location.search)), [location.search]);
 
   const [products, setProducts] = useState([]);
   const [pageInfo, setPageInfo] = useState({
     totalCount: 0,
   });
 
-  const [conditions, setConditions] = useState();
+  const history = useHistory();
 
-  const get = async (value) => {
+  const get = async () => {
     const CancelToken = axios.CancelToken;
 
     const source = CancelToken.source();
 
-    getProducts(source.token, pageInput, value);
+    getProducts(source.token, pageInput);
 
     setTimeout(() => {
       if (source) {
@@ -38,9 +73,7 @@ const Products = ({ location }) => {
     }, 5000);
   };
 
-  const getProducts = async (token, pageInput, conditions) => {
-    // console.log(pageInput);
-
+  const getProducts = async (token, pageInput) => {
     try {
       const { data } = await axios(API_URL + '/products', {
         params: {
@@ -62,12 +95,30 @@ const Products = ({ location }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    get(conditions);
-  }, [pageInput]);
+    get();
+  }, [pageInput, conditions]);
+
+  const encodeBase64 = (object) => {
+    const str = JSON.stringify(object);
+
+    if(!str) {
+      return undefined
+    }
+
+    const hashed = window.btoa(str)
+    return hashed
+  }
 
   const onChangeFilter = (value) => {
-    setConditions(value);
-    get(value);
+   
+    const hashed = encodeBase64(value)
+
+    let url = '/products?page=1&perPage=15'
+
+    if(hashed) {
+      url += `&conditions=${hashed}`
+    }
+    history.replace(url)
   };
 
   return (
@@ -77,7 +128,7 @@ const Products = ({ location }) => {
         <ProductFilter onChange={onChangeFilter} />
         <div style={{ width: '80%' }}>
           <ProductsList list={products} />
-          <PageNavigator currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
+          <PageNavigator conditions={encodeBase64(conditions)} currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
         </div>
       </Wrapper>
     </Container>

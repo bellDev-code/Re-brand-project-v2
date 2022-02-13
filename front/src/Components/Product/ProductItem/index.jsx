@@ -15,6 +15,7 @@ const ProductItem = ({ item }) => {
         <div>{item.name}</div>
         <div>{item.price}</div>
         <div>{item.brand.name}</div>
+        <div>{item.createdAt}</div>
       </Link>
     </Container>
   );
