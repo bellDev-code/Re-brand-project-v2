@@ -48,7 +48,8 @@ export const ImageWrapper = styled.div`
 
 export const MainImage = styled.img`
   width: 250px;
-  height: 300px;
+  height: 250px;
+  object-fit: cover;
 `;
 
 export const ProductInfoWrapper = styled.div`

@@ -3,7 +3,8 @@ import { Container } from './styles';
 import PropTypes from 'prop-types';
 import ProductItem from '../ProductItem';
 
-const ProductsList = ({ list }) => {
+const ProductsList = ({ list, conditions }) => {
+  console.log(conditions, 'url');
   return (
     <Container>
       {list.map((product) => {
@@ -15,6 +16,7 @@ const ProductsList = ({ list }) => {
 
 ProductsList.propTypes = {
   list: PropTypes.array,
+  conditions: PropTypes.string,
 };
 
 export default ProductsList;

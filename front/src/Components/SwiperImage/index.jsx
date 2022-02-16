@@ -2,7 +2,6 @@ import React from 'react';
 import { Container, Image } from './styles';
 import { Navigation } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import TestImage from '@Assets/Layouts/blanc.jpeg';
 import PropTypes from 'prop-types';
 
 import 'swiper/css';

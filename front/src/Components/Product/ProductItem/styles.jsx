@@ -6,5 +6,7 @@ export const Container = styled.div`
 
 export const ProductImage = styled.img`
   width: 100%;
+  max-width: 300px;
+  height: 300px;
   object-fit: contain;
 `;

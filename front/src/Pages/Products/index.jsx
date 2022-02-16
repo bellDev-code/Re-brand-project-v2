@@ -16,7 +16,6 @@ import { useHistory } from 'react-router-dom';
 const PER_PAGE = 15;
 
 const Products = ({ location }) => {
-
   // 1. url 넣는 방법
   // const parseCondtions = (input) => {
   //   return {
@@ -47,7 +46,7 @@ const Products = ({ location }) => {
   }
 
 
-  // console.log(location.search)
+  console.log(location.search, "locationSearch")
   const pageInput = useMemo(() => parsePageInput(qs.parse(location.search), PER_PAGE), [location.search]);
 
   const conditions = useMemo(() => parseCondtions(qs.parse(location.search)), [location.search]);
@@ -110,7 +109,6 @@ const Products = ({ location }) => {
   }
 
   const onChangeFilter = (value) => {
-   
     const hashed = encodeBase64(value)
 
     let url = '/products?page=1&perPage=15'
@@ -127,7 +125,7 @@ const Products = ({ location }) => {
       <Wrapper>
         <ProductFilter onChange={onChangeFilter} />
         <div style={{ width: '80%' }}>
-          <ProductsList list={products} />
+          <ProductsList conditions={encodeBase64(conditions)} list={products} />
           <PageNavigator conditions={encodeBase64(conditions)} currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
         </div>
       </Wrapper>
