@@ -7,4 +7,5 @@ export const Container = styled.section`
 export const Wrapper = styled.div`
   display: flex;
   width: 100%;
+  padding-top: 50px;
 `;

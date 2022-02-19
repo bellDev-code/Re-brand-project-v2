@@ -12,7 +12,7 @@ const SwiperImage = ({ images }) => {
   return (
     <Container>
       <Swiper modules={[Navigation]} slidesPerView={1} navigation>
-        {images.map((item, index) => {
+        {images.map((item) => {
           return (
             <SwiperSlide key={item.id}>
               <Image src={item.url} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TempImage from '@Assets/Instagram/post2.png';
-import { Container, ProductImage } from './styles';
+import { Container, ProductImage, ItemWrapper, ItemTitle, ItemPrice, BrandName } from './styles';
 import { Link } from 'react-router-dom';
 
 const ProductItem = ({ item }) => {
@@ -12,10 +12,11 @@ const ProductItem = ({ item }) => {
         <div>
           <ProductImage src={item.thumbnail ? item.thumbnail.url : TempImage} />
         </div>
-        <div>{item.name}</div>
-        <div>{item.price}</div>
-        <div>{item.brand.name}</div>
-        <div>{item.createdAt}</div>
+        <ItemWrapper>
+        <ItemTitle>{item.name}</ItemTitle>
+        <ItemPrice>{item.price}</ItemPrice>
+        <BrandName>{item.brand.name}</BrandName>
+        </ItemWrapper>
       </Link>
     </Container>
   );

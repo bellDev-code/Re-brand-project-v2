@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styled from './styles';
+import { Select, Option } from './styles';
 
 const Selector = ({ list, onChange: onChangeProp }) => {
   const [selected, setSelected] = useState('');
@@ -19,16 +19,16 @@ const Selector = ({ list, onChange: onChangeProp }) => {
 
   return (
     <div>
-      <select value={selected} onChange={onChange}>
-        <option value="">선택</option>
+      <Select value={selected} onChange={onChange}>
+        <Option value="">선택</Option>
         {list?.map((item, index) => {
           return (
-            <option key={index} value={item.value}>
+            <Option key={index} value={item.value}>
               {item.name}
-            </option>
+            </Option>
           );
         })}
-      </select>
+      </Select>
     </div>
   );
 };
