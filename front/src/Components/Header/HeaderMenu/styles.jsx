@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 export const MenuContainer = styled.div`
+  position: relative;
   width: 30%;
   display: flex;
   justify-content: center;
