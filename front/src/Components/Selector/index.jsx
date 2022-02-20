@@ -2,8 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Select, Option } from './styles';
 
-const Selector = ({ list, onChange: onChangeProp }) => {
-  const [selected, setSelected] = useState('');
+const Selector = ({ initialValue, list, onChange: onChangeProp }) => {
+  const [selected, setSelected] = useState(initialValue);
 
   const onChange = useCallback((event) => {
     setSelected(event.target.value);
@@ -34,6 +34,7 @@ const Selector = ({ list, onChange: onChangeProp }) => {
 };
 
 Selector.propTypes = {
+  initialValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   list: PropTypes.array,
   onChange: PropTypes.func,
 };

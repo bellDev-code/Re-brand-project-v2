@@ -25,8 +25,7 @@ const Products = ({ location }) => {
 
   // 2. base64를 사용한 방법
   const parseCondtions = (input) => {
-
-    if(!('conditions' in input)) {
+    if (!('conditions' in input)) {
       return undefined;
     }
 
@@ -36,17 +35,16 @@ const Products = ({ location }) => {
     let conditions;
 
     try {
-      const str = window.atob(input.conditions)
+      const str = window.atob(input.conditions);
       conditions = JSON.parse(str);
     } catch (error) {
-      return undefined
+      return undefined;
     }
 
     return conditions;
-  }
+  };
 
-
-  console.log(location.search, "locationSearch")
+  console.log(location.search, 'locationSearch');
   const pageInput = useMemo(() => parsePageInput(qs.parse(location.search), PER_PAGE), [location.search]);
 
   const conditions = useMemo(() => parseCondtions(qs.parse(location.search)), [location.search]);
@@ -100,33 +98,38 @@ const Products = ({ location }) => {
   const encodeBase64 = (object) => {
     const str = JSON.stringify(object);
 
-    if(!str) {
-      return undefined
+    if (!str) {
+      return undefined;
     }
 
-    const hashed = window.btoa(str)
-    return hashed
-  }
+    const hashed = window.btoa(str);
+    return hashed;
+  };
 
   const onChangeFilter = (value) => {
-    const hashed = encodeBase64(value)
+    const hashed = encodeBase64(value);
 
-    let url = '/products?page=1&perPage=15'
+    let url = '/products?page=1&perPage=15';
 
-    if(hashed) {
-      url += `&conditions=${hashed}`
+    if (hashed) {
+      url += `&conditions=${hashed}`;
     }
-    history.replace(url)
+    history.replace(url);
   };
 
   return (
     <Container>
       <ProductBanner />
       <Wrapper>
-        <ProductFilter onChange={onChangeFilter} />
+        <ProductFilter conditions={conditions} onChange={onChangeFilter} />
         <div style={{ width: '80%' }}>
-          <ProductsList conditions={encodeBase64(conditions)} list={products} />
-          <PageNavigator conditions={encodeBase64(conditions)} currentPage={pageInput.page} pageInfo={pageInfo} perPage={PER_PAGE} />
+          <ProductsList list={products} />
+          <PageNavigator
+            conditions={encodeBase64(conditions)}
+            currentPage={pageInput.page}
+            pageInfo={pageInfo}
+            perPage={PER_PAGE}
+          />
         </div>
       </Wrapper>
     </Container>

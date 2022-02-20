@@ -1,8 +1,8 @@
 import Selector from '@Components/Selector';
 import React, { useState } from 'react';
 
-const useSelector = (list) => {
-  const [value, setValue] = useState();
+const useSelector = (initialValue, list) => {
+  const [value, setValue] = useState(initialValue);
 
   const onChange = (v) => {
     setValue(v);
@@ -18,7 +18,7 @@ const useSelector = (list) => {
   };
 
   const render = () => {
-    return <Selector list={makeSelectElement()} onChange={onChange} />;
+    return <Selector initialValue={value} list={makeSelectElement()} onChange={onChange} />;
   };
 
   return {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useCallback, useState } from 'react';
 import { Container } from './styles';
 
-const ProductFilter = ({ onChange }) => {
+const ProductFilter = ({ onChange, conditions }) => {
   const [categories, setCategories] = useState();
 
   const getCategories = useCallback(async () => {
@@ -17,35 +17,31 @@ const ProductFilter = ({ onChange }) => {
       });
 
       setCategories(result.data);
-      
     } catch (error) {
       console.log(error);
     }
   }, []);
 
-  const cSelector1 = useSelector(categories);
-  const cSelector2 = useSelector([
-    {
-      name: '폰',
-      id: 'phone',
-    },
-    {
-      name: '커피',
-      id: 'coffee',
-    },
-  ]);
+  const cSelector1 = useSelector(conditions?.categoryId, categories);
+  // const cSelector2 = useSelector([
+  //   {
+  //     name: '폰',
+  //     id: 'phone',
+  //   },
+  //   {
+  //     name: '커피',
+  //     id: 'coffee',
+  //   },
+  // ]);
 
   useEffect(() => {
     getCategories();
   }, []);
 
-  console.log('categories', categories);
-
   const onClick = () => {
     const params = {
-      categoryId: cSelector1.value
+      categoryId: cSelector1.value,
     };
-
     onChange(params);
   };
 
@@ -62,6 +58,7 @@ const ProductFilter = ({ onChange }) => {
 
 ProductFilter.propTypes = {
   onChange: PropTypes.func,
+  conditions: PropTypes.object,
 };
 
 export default ProductFilter;
